@@ -5,7 +5,7 @@
     ["module-resolver", {
       "root": ["./"],
       "alias": {
-        "@src": "./src아니"
+        "@src": "./src"
       }
     }]
   ]
