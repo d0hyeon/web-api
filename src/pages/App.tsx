@@ -51,6 +51,10 @@ const globalCss = css`
     box-sizing: border-box;
   }
 
+  html {
+    font-family: 'Do Hyeon', sans-serif;
+  }
+
   ul, li, ol {
     list-style: none; 
   }
@@ -70,6 +74,9 @@ const globalCss = css`
 
   img {
     max-width: 100%;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
   }
 `
 

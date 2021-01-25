@@ -15,10 +15,11 @@ const Navigate: React.FC = () => {
   
   return (
     <Wrapper className="navigate">
+      <Title>목차</Title>
       <MenuList>
         {CATEGORIES.map(({title, path}) => (
           <li key={title}>
-            <NavLink to={path} activeStyle={{fontWeight: 'bold'}}>{title}</NavLink>
+            <NavLink to={path} activeStyle={{color: '#333'}}>{title}</NavLink>
           </li>
         ))}
       </MenuList>
@@ -29,6 +30,11 @@ const Navigate: React.FC = () => {
 Navigate.displayName = 'Navigate';
 export default React.memo(Navigate);
 
+const Title = styled.p`
+  font-size: 22px;
+  margin-bottom: 20px;
+`
+
 const Wrapper = styled.nav`
   width: 300px;
   height: 100%;
@@ -37,5 +43,13 @@ const Wrapper = styled.nav`
 `;
 
 const MenuList = styled.ul`
-  
+  li {
+    & ~ li {
+      margin-top: 8px;
+    }
+
+    a {
+      color: #666;
+    }
+  }
 `
