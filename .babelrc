@@ -1,12 +1,6 @@
 {
   "preset": ["@emotion/babel-preset-css-prop"],
   "plugins": [
-    "@emotion",
-    ["module-resolver", {
-      "root": ["./"],
-      "alias": {
-        "@src": "./src"
-      }
-    }]
+    "@emotion/babel-plugin"
   ]
 }
