@@ -49,6 +49,7 @@ const globalCss = css`
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    line-height: 1;
   }
 
   html {
@@ -69,7 +70,8 @@ const globalCss = css`
     color: inherit;
     text-decoration: none;
     text-align: center;
-    line-height: 1;
+    line-height: inherit;
+    font-family: inherit;
   }
 
   img {
