@@ -8,6 +8,7 @@ const Home = React.lazy(() => import('@src/pages/Home'));
 const BroadCastChannel = React.lazy(() => import('@src/pages/Broadcast'));
 const BroadCastChannelDetail = React.lazy(() => import('@src/pages/Broadcast/detail'));
 const BackgroundTask = React.lazy(() => import('@src/pages/BackgroundTask'));
+const ResizeObserverPage = React.lazy(() => import('@src/pages/ResizeObserver'));
 
 
 const App: React.FC = () => {
@@ -23,6 +24,7 @@ const App: React.FC = () => {
               <Route exact path="/broadcast" component={BroadCastChannel} />
               <Route exact path="/broadcast/:channelId" component={BroadCastChannelDetail} />
               <Route exact path="/background" component={BackgroundTask} />
+              <Route exact path="/resize" component={ResizeObserverPage} />
             </main>
           </React.Suspense>
         </Switch>

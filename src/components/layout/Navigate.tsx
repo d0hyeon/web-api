@@ -9,7 +9,8 @@ type Menu = {
 
 const CATEGORIES: Menu[] = [
   {title: 'BroadCast Channel', path: '/broadcast'},
-  {title: 'Background Task', path: '/background'}
+  {title: 'Background Task', path: '/background'},
+  {title: 'Resize Observer', path: '/resize'}
 ]
 
 const Navigate: React.FC = () => {
