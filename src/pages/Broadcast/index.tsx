@@ -1,7 +1,6 @@
 import React from 'react';
-import styled from '@emotion/styled';
-import { SInput } from '@src/components/styles/input';
-import { Button, Section } from './detail';
+import { Input } from '@src/components/styles/input';
+import { Button, Section, Header } from '@src/components/styles/common';
 import { useHistory } from 'react-router-dom';
 
 const BroadCastChannel: React.FC = () => {
@@ -23,24 +22,12 @@ const BroadCastChannel: React.FC = () => {
       <Section>
         <h2>채널 개설하기</h2>
         <div>
-          <SInput placeholder="채널이름" ref={inputRef} />
+          <Input placeholder="채널이름" ref={inputRef} />
           <Button onClick={setChannelHandler}>생성</Button>
         </div>
       </Section>
     </>
   )
 };
-
-const Header = styled.header`
-  h1 {
-    font-size: 24px;
-  }
-
-  p {
-    margin-top: 10px;
-    line-height: 1.6;
-    font-size: 16px;
-  }
-`;
 
 export default BroadCastChannel;

@@ -7,7 +7,7 @@ export interface InputProps {
   height?: number; 
 }
 
-export const SInput = styled.input<InputProps>`
+export const Input = styled.input<InputProps>`
   border: 1px solid #ddd;
   padding: 0 10px;
   line-height: 28px;

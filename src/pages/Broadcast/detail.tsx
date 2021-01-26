@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { SInput } from '@src/components/styles/input';
+import { Input } from '@src/components/styles/input';
 import { useLocation, RouteChildrenProps } from 'react-router-dom';
+import { Button, Section, Header } from '@src/components/styles/common';
+import { H2, H3, Em } from '@src/components/styles/text';
 
 type MutableRefObject<T> = {
   current: T | null;
@@ -50,26 +52,25 @@ const BroadCast: React.FC<RouteChildrenProps<Params>> = ({match}) => {
 
   return (
     <>
-      <Section>
-        <h2>{channelId} 채널</h2>
+      <Header>
+        <H2><Em>{channelId}</Em> 채널</H2>
         <div>
           {/* @ts-ignore */}
           <Button as="a" href={location?.pathname} target="_blank" rel="norefferrer">
             탭간의 통신하기
           </Button>
-
-          <article>
-            <h4>발신하기</h4>
-            <div>
-              <SInput ref={inputRef}/>
-              <Button onClick={messagePostHandler}>전송</Button>
-            </div>
-          </article>
+        </div>
+      </Header>
+      <Section>
+        <H3>발신하기</H3>
+        <div>
+          <Input ref={inputRef}/>
+          <Button onClick={messagePostHandler}>전송</Button>
         </div>
       </Section>
       {!!messageList.length && (
         <Section>
-          <h1>수신내역</h1>
+          <H3>수신내역</H3>
           <MessageList>
             {messageList.map(({timeStamp, data}) => (
               <li key={timeStamp.toString()}>
@@ -85,34 +86,6 @@ const BroadCast: React.FC<RouteChildrenProps<Params>> = ({match}) => {
 
 export default React.memo(BroadCast);
 
-export const Section = styled.section`
-  margin-top: 20px;
-  h3 {
-    font-size: 20px;
-  }
-  
-  > div {
-    margin-top: 15px;
-  }
-
-  article {
-    h4 {
-      margin: 10px 0;
-      font-size: 18px;
-    }
-  }
-`
-
-export const Button = styled.button`
-  min-width: 100px;
-  height: 30px;
-  padding: 0 10px;
-  border: 1px solid #666;
-  color: #666 ;
-  line-height: 28px;
-  font-size: 14px;
-`;
-
 const MessageList = styled.ul`
   margin-top: 10px;
   li {
@@ -122,4 +95,3 @@ const MessageList = styled.ul`
     }
   }
 `
-
