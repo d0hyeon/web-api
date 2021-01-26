@@ -18,7 +18,7 @@ interface Message {
   timeStamp: number;
 }
 
-const BroadCast: React.FC<RouteChildrenProps<Params>> = ({match}) => {
+const ChennelDetail: React.FC<RouteChildrenProps<Params>> = ({match}) => {
   const channelId = match?.params.channelId ?? '';
   const location = useLocation();
   const [messageList, setMessageList] = React.useState<Message[]>([]);
@@ -84,7 +84,8 @@ const BroadCast: React.FC<RouteChildrenProps<Params>> = ({match}) => {
   )
 };
 
-export default React.memo(BroadCast);
+ChennelDetail.displayName = 'ChennelDetail';
+export default React.memo(ChennelDetail);
 
 const MessageList = styled.ul`
   margin-top: 10px;

@@ -31,4 +31,5 @@ const BroadCastChannel: React.FC = () => {
   )
 };
 
+BroadCastChannel.displayName = 'BroadCastChannel';
 export default BroadCastChannel;

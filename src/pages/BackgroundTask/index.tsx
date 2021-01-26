@@ -158,4 +158,5 @@ const BackgroundTask = () => {
   )
 }
 
+BackgroundTask.displayName = 'BackgroundTask';
 export default BackgroundTask;
