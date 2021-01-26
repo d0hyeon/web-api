@@ -35,7 +35,7 @@ export const Ul = styled.ul`
   > li {
     position: relative;
     padding-left: 10px;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.3;
     & ~ li {
       margin-top: 8px;
