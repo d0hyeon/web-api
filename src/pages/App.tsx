@@ -7,6 +7,7 @@ import Navigate from '@src/components/layout/Navigate';
 const Home = React.lazy(() => import('@src/pages/Home'));
 const BroadCastChannel = React.lazy(() => import('@src/pages/Broadcast'));
 const BroadCastChannelDetail = React.lazy(() => import('@src/pages/Broadcast/detail'));
+const BackgroundTask = React.lazy(() => import('@src/pages/BackgroundTask'));
 
 
 const App: React.FC = () => {
@@ -21,6 +22,7 @@ const App: React.FC = () => {
               <Route exact path="/" component={Home}/> 
               <Route exact path="/broadcast" component={BroadCastChannel} />
               <Route exact path="/broadcast/:channelId" component={BroadCastChannelDetail} />
+              <Route exact path="/background" component={BackgroundTask} />
             </main>
           </React.Suspense>
         </Switch>
@@ -54,6 +56,7 @@ const globalCss = css`
 
   html {
     font-family: 'Do Hyeon', sans-serif;
+    font-size: 62.5%;
   }
 
   ul, li, ol {
