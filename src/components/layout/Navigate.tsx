@@ -51,6 +51,7 @@ const MenuList = styled.ul`
 
     a {
       color: #333;
+      font-size: 16px;
     }
   }
 `
