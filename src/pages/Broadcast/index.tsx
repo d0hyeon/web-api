@@ -2,6 +2,7 @@ import React from 'react';
 import { Input } from '@src/components/styles/input';
 import { Button, Section, Header } from '@src/components/styles/common';
 import { useHistory } from 'react-router-dom';
+import { H1, P } from '@src/components/styles/text';
 
 const BroadCastChannel: React.FC = () => {
   const history = useHistory();
@@ -16,8 +17,8 @@ const BroadCastChannel: React.FC = () => {
   return (
     <>
       <Header>
-        <h1>BroadCast Channel</h1>
-        <p>BroadCast Channel은 동일 한 웹 워커 내 (Window, Tab, Frame, IFrame) 에서 브라우징 컨텍스트를 통신 할 수 있게 해주는 API이다.</p>
+        <H1>BroadCast Channel</H1>
+        <P>BroadCast Channel은 동일 한 웹 워커 내 (Window, Tab, Frame, IFrame) 에서 브라우징 컨텍스트를 통신 할 수 있게 해주는 API이다.</P>
       </Header>
       <Section>
         <h2>채널 개설하기</h2>
