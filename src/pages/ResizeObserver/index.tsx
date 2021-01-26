@@ -1,6 +1,6 @@
 import React from 'react';
 import { Header, Section } from '@src/components/styles/common';
-import { H1, H2, P, Code } from '@src/components/styles/text';
+import { H1, H2, P, Code, Em } from '@src/components/styles/text';
 import Toggle from '@src/components/Toggle';
 
 const ResizeObserverPage: React.FC = () => {
@@ -35,7 +35,7 @@ const ResizeObserverPage: React.FC = () => {
                   {text}
                 </P>
               ))
-              : <P>클릭해보자</P>
+              : <P><Em>날 눌러봐~~</Em></P>
             }
           </div>
         </Toggle>
