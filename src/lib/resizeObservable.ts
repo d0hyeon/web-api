@@ -19,11 +19,11 @@ export interface ResizeObservableInterface {
   disconnect(): void;
 }
 
-type ObserverCallbacksWithElement = Map<Element, ResizeObserverCallback[]>;
+type RegisteredMap = Map<Element, ResizeObserverCallback[]>;
 
 class ResizeObservable {
   private observer: null | ResizeObserver = null;
-  private collection: ObserverCallbacksWithElement = new Map(); 
+  private collection: RegisteredMap = new Map(); 
   private entryCallback = (entries: ResizeObserverEntry[]) => {
     for(const entry of entries) {
       if(this.collection.has(entry.target)) {
@@ -53,6 +53,7 @@ class ResizeObservable {
     this.observer?.unobserve(target);
   }
   disconnect() {
+    this.collection.clear();
     this.observer?.disconnect();
   }
 }
