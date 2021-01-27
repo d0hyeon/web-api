@@ -1,4 +1,19 @@
-import ResizeObserver from 'resize-observer-polyfill';
+
+interface ResizeObserverMethods {
+  observe(target: Element): void;
+  unobserve(target: Element): void;
+  disconnect(): void;
+}
+
+interface ResizeObserverEntry {
+  readonly target: Element;
+  readonly contentRect: DOMRectReadOnly;
+}
+
+declare var ResizeObserver: {
+  prototype: ResizeObserverMethods;
+  new(callback: (entries: ResizeObserverEntry[], observer: ResizeObserver) => void): ResizeObserverMethods;
+}
 
 interface DOMRectReadOnly {
   readonly x: number;
@@ -11,15 +26,15 @@ interface DOMRectReadOnly {
   readonly left: number;
 }
 
-type ResizeObserverCallback = (contentRect: DOMRectReadOnly) => void;
+type ResizeObservableCallback = (contentRect: DOMRectReadOnly) => void;
 
 export interface ResizeObservableInterface {
-  register: (target: HTMLElement, callback: ResizeObserverCallback) => void;
+  register: (target: HTMLElement, callback: ResizeObservableCallback) => void;
   unregister: (target: HTMLElement) => void;
   disconnect(): void;
 }
 
-type RegisteredMap = Map<Element, ResizeObserverCallback[]>;
+type RegisteredMap = Map<Element, ResizeObservableCallback[]>;
 
 class ResizeObservable {
   private observer: null | ResizeObserver = null;
@@ -36,13 +51,25 @@ class ResizeObservable {
   }
   constructor () {
     if(!this.observer) {
-      this.observer = new ResizeObserver(this.entryCallback);
+      if(!('ResizeObserver' in window)) {
+        import('resize-observer-polyfill').then(module => {
+          const ResizeObserver = module.default;
+          this.observer = new ResizeObserver(this.entryCallback);
+        })
+      } else {
+        this.observer = new ResizeObserver(this.entryCallback);
+      }
     }
   }
-  register (target: Element, callback: ResizeObserverCallback) {
+  register (target: Element, callback: ResizeObservableCallback) {
+    if(!this.observer) {
+      return setTimeout(() => {
+        this.register(target, callback)
+      }, 100)
+    }
     if(this.collection.has(target)) {
       const callbacks = this.collection.get(target);
-      this.collection.set(target, [...callbacks as ResizeObserverCallback[], callback]);
+      this.collection.set(target, [...callbacks as ResizeObservableCallback[], callback]);
     } else {
       this.collection.set(target, [callback]);
       this.observer?.observe(target);
