@@ -1,12 +1,15 @@
 import React from 'react';
+import styled from '@emotion/styled';
 import { Header, Section } from '@src/components/styles/common';
 import { H1, H2, P, Code, Em } from '@src/components/styles/text';
 import Toggle from '@src/components/Toggle';
 
+const MY_TEXT = '낮엔 파란하늘\n 별이 보이는밤 \n 기분좋은날 모두 모일까 내가사랑하는 삶을 사랑하지 나는\n 우야야야야\n'
+
 const ResizeObserverPage: React.FC = () => {
   const [text, setText] = React.useState<string>('');
   const addTextHandler = React.useCallback(() => {
-    setText('낮엔 파란하늘\n 별이 보이는밤 \n 기분좋은날 모두 모일까 내가사랑하는 삶을 사랑하지 나는\n 우야야야야\n');
+    setText(prev => !!prev ? '' : MY_TEXT);
   }, [setText]);
   return (
     <>
@@ -26,23 +29,33 @@ const ResizeObserverPage: React.FC = () => {
         <P>
           Resize Observer API는 이러한 문제에 대한 솔루션을 제공하고 요소의 박스 모델 크기 변경을 성능적으로 제공한다.
         </P>
-        <Toggle title={<P>예제~~</P>}>
-          <P>해당 컴포넌트는 Resize Observer API를 통해 엘리먼트의 사이즈를 구하고<br/> style 속성 중 height 속성을 스위칭 시키는 형태의 컴포넌트이다.</P>
-          <div onClick={addTextHandler}>
-            {!!text 
-              ? text.split('\n').map(text => (
-                <P key={text}>
-                  {text}
-                </P>
-              ))
-              : <P><Em>날 눌러봐~~</Em></P>
-            }
-          </div>
-        </Toggle>
+        <ExampleSection>
+          <Toggle title={<P>예제~~</P>}>
+            <P>해당 컴포넌트는 Resize Observer API를 통해 엘리먼트의 사이즈를 구하고<br/> style 속성 중 height 속성을 스위칭 시키는 형태의 컴포넌트이다.</P>
+            <div>
+              {!!text && text.split('\n').map(text => (
+                  <P key={text}>
+                    {text}
+                  </P>
+              ))}
+              <P onClick={addTextHandler}><Em>날 눌러봐~~</Em></P>
+            </div>
+          </Toggle>
+        </ExampleSection>
       </Section>
     </>
   )
-}
+};
+
+const ExampleSection = styled.div`
+  .toggle__content {
+    border: 1px solid #ddd;
+
+    &.hidden {
+      border-color: transparent;
+    }
+  }
+`;
 
 ResizeObserverPage.displayName = 'ResizeObserverPage';
 export default ResizeObserverPage;
