@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import ResizeObservable from '@src/lib/resizeObservable';
+import ResizeObservable from '@src/lib/ResizeObservable';
 
 interface Props {
   title: React.ReactNode;
