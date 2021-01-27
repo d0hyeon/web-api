@@ -7,7 +7,7 @@ interface ResizeObserverMethods {
 
 interface ResizeObserverEntry {
   readonly target: Element;
-  readonly contentRect: DOMRectReadOnly;
+  readonly contentRect: DOMRect;
 }
 
 declare var ResizeObserver: {
@@ -15,18 +15,7 @@ declare var ResizeObserver: {
   new(callback: (entries: ResizeObserverEntry[], observer: ResizeObserver) => void): ResizeObserverMethods;
 }
 
-interface DOMRectReadOnly {
-  readonly x: number;
-  readonly y: number;
-  readonly width: number;
-  readonly height: number;
-  readonly top: number;
-  readonly right: number;
-  readonly bottom: number;
-  readonly left: number;
-}
-
-type ResizeObservableCallback = (contentRect: DOMRectReadOnly) => void;
+type ResizeObservableCallback = (contentRect: DOMRect) => void;
 
 export interface ResizeObservableInterface {
   register: (target: HTMLElement, callback: ResizeObservableCallback) => void;
@@ -54,7 +43,7 @@ class ResizeObservable {
       if(!('ResizeObserver' in window)) {
         import('resize-observer-polyfill').then(module => {
           const ResizeObserver = module.default;
-          this.observer = new ResizeObserver(this.entryCallback);
+          this.observer = new ResizeObserver(this.entryCallback as any);
         })
       } else {
         this.observer = new ResizeObserver(this.entryCallback);
