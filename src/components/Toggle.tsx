@@ -14,17 +14,18 @@ const Toggle: React.FC<Props> = ({children, title}) => {
   const [isInit, setIsInit] = React.useState<boolean>(false);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
-  React.useLayoutEffect(() => {
-    const ob = new ResizeObservable();
-    ob.register(contentRef.current as HTMLDivElement, ({height}) => {
-      if(height >= lastHeightRef.current) {
-        lastHeightRef.current = height;
-        setIsInit(true);
-      }
-    });
+  const ob = React.useMemo(() => new ResizeObservable(), []);
+  const resizeHandler = React.useCallback(({height}: DOMRect) => {
+    if((isOpen || !isInit) && height !== lastHeightRef.current) {
+      lastHeightRef.current = height;
+      setIsInit(true);
+    }
+  }, [isOpen, isInit, setIsInit, lastHeightRef]);
 
+  React.useLayoutEffect(() => {
+    ob.register(contentRef.current as HTMLDivElement, resizeHandler);
     return () => ob.disconnect();
-  }, [setIsInit, children, contentRef]);
+  }, [ob, resizeHandler, contentRef]);
 
   React.useLayoutEffect(() => {
     // 내용이 열리고 동적으로 컨텐츠가 추가 됬을 때 사이즈 감지를 위해 스타일 속성 중 height 를 auto로 변환시킴.
@@ -43,14 +44,15 @@ const Toggle: React.FC<Props> = ({children, title}) => {
   }, [setIsOpen, lastHeightRef]);
 
   return ( 
-    <Wrapper >
-      <Title isOpen={isOpen} onClick={toggleHandler}>{title}</Title>
+    <Wrapper className="toggle-article">
+      <Title isOpen={isOpen} onClick={toggleHandler} className="toggle__title">{title}</Title>
       <Content 
         isOpen={isOpen}
         height={heightValue}
         isInit={isInit} 
         ref={contentRef} 
         will-change="true"
+        className={`toggle__content ${isOpen ? '' : 'hidden'}`}
       >
         {children}
       </Content>
@@ -92,7 +94,7 @@ const Content = styled.div<StyledProps>`
       height: ${isOpen ? height : '0'};
     ` : `
       height: auto;
-      visible: hidden;
+      visibility: hidden;
     `}
   `};
 `
