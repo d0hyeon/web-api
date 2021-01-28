@@ -9,7 +9,8 @@ const BroadCastChannel = React.lazy(() => import('@src/pages/Broadcast'));
 const BroadCastChannelDetail = React.lazy(() => import('@src/pages/Broadcast/detail'));
 const BackgroundTask = React.lazy(() => import('@src/pages/BackgroundTask'));
 const ResizeObserverPage = React.lazy(() => import('@src/pages/ResizeObserver'));
-
+const Performance = React.lazy(() => import('@src/pages/Performance'));
+const PerformanceObserver = React.lazy(() => import('@src/pages/Performance/Observer'));
 
 const App: React.FC = () => {
   return (
@@ -25,6 +26,8 @@ const App: React.FC = () => {
               <Route exact path="/broadcast/:channelId" component={BroadCastChannelDetail} />
               <Route exact path="/background" component={BackgroundTask} />
               <Route exact path="/resize" component={ResizeObserverPage} />
+              <Route exact path="/performance" component={Performance} />
+              <Route exact path="/performance/observer" component={PerformanceObserver} />
             </main>
           </React.Suspense>
         </Switch>
@@ -84,6 +87,19 @@ const globalCss = css`
   }
   h1, h2, h3, h4, h5, h6 {
     font-weight: normal;
+  }
+
+  .hljs {
+    padding: 10px; 
+    font-size: 14px;
+    font-family: 'Source Code Pro';
+    font-weight: 100;
+    line-height: 1.5;
+    letter-spacing: 1px;
+
+    span {
+      font: inherit;
+    }
   }
 `
 

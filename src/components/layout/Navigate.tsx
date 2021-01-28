@@ -10,7 +10,9 @@ type Menu = {
 const CATEGORIES: Menu[] = [
   {title: 'BroadCast Channel', path: '/broadcast'},
   {title: 'Background Task', path: '/background'},
-  {title: 'Resize Observer', path: '/resize'}
+  {title: 'Resize Observer', path: '/resize'},
+  {title: 'Performance', path: '/performance'},
+  {title: 'PerformanceObserver', path: '/performance/observer'}
 ]
 
 const Navigate: React.FC = () => {
@@ -21,7 +23,7 @@ const Navigate: React.FC = () => {
       <MenuList>
         {CATEGORIES.map(({title, path}) => (
           <li key={title}>
-            <NavLink to={path} activeStyle={{color: '#C43326'}}>{title}</NavLink>
+            <NavLink to={path} activeStyle={{color: '#C43326'}} exact>{title}</NavLink>
           </li>
         ))}
       </MenuList>

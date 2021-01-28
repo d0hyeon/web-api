@@ -30,7 +30,7 @@ export const Button = styled.button`
 `;
 
 export const Ul = styled.ul`
-  padding-left: 5px;
+  padding-left: 10px;
 
   > li {
     position: relative;
@@ -45,6 +45,22 @@ export const Ul = styled.ul`
       left: 0;
       top: 0;
       content: '-';
+    }
+
+    > ul {
+      position: relative;
+      padding: 0;
+      margin-left: -4px;
+      overflow: hidden;
+      &::before {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1px;
+        height: 1000px;
+        background-color: #333;
+        content: '';
+      }
     }
   }
 `;
