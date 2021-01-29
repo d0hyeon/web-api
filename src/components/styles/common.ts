@@ -18,6 +18,16 @@ export const Section = styled.section`
   }
 `;
 
+export const Article = styled.article`
+  & ~ & {
+    margin-top: 10px;
+  }
+
+  h3 {
+    margin-bottom: 5px;
+  }
+`
+
 
 export const Button = styled.button`
   min-width: 100px;

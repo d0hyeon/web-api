@@ -12,7 +12,8 @@ const CATEGORIES: Menu[] = [
   {title: 'Background Task', path: '/background'},
   {title: 'Resize Observer', path: '/resize'},
   {title: 'Performance', path: '/performance'},
-  {title: 'PerformanceObserver', path: '/performance/observer'}
+  {title: 'PerformanceObserver', path: '/performance/observer'},
+  {title: 'MediaStream', path: '/media'}
 ]
 
 const Navigate: React.FC = () => {
