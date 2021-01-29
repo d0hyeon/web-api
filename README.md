@@ -6,4 +6,6 @@
 - Broadcast Channel
 - Background Task
 - Resize Observer
+- Performance
+- Performance Observer
 
