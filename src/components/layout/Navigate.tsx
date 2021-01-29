@@ -15,6 +15,7 @@ const CATEGORIES: Menu[] = [
   {title: 'PerformanceObserver', path: '/performance/observer'},
   {title: 'MediaStream', path: '/media'},
   {title: 'MediaStreamTrack', path: '/media/track'},
+  {title: 'MediaDevices', path: '/media/devices'}
 ]
 
 const Navigate: React.FC = () => {
