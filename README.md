@@ -14,9 +14,9 @@ yarn start
 // or
 npm run start
 ```
+----
 
 ## 항목
-----
 - Broadcast Channel
 - Background Task
 - Resize Observer
