@@ -18,10 +18,10 @@ declare global {
 
 const idleTasks = [() => alert('run idle task 1'), () => alert('run idle task 2'),() => alert('run idle task 3'),() => alert('run idle task 4')];
 
-const BackgroundTask = () => {
-  let idleTaskIdx = 0;
-  let mainTaskCnt = 0;
-  let timerId: any = null;
+const BackgroundTask: React.FC = () => {
+  const idleTaskIdxRef = React.useRef<number>(0);
+  const mainTaskCntRef = React.useRef<number>(0);
+  const timerIdRef = React.useRef<number>(0);
 
   React.useEffect(() => {
     // Polyfill
@@ -53,38 +53,38 @@ const BackgroundTask = () => {
   }, []);
 
   const idleFn = React.useCallback((idle) => {
-    idleTasks[idleTaskIdx](); 
+    idleTasks[idleTaskIdxRef.current](); 
     console.log(idle.didTimeout, idle.timeRemaining());
-    if(idleTasks.length-1 > idleTaskIdx++) {
+    if(idleTasks.length-1 > idleTaskIdxRef.current++) {
       //@ts-ignore
       window.requestIdleCallback(idleFn);
     }
-  }, [idleTaskIdx]);
+  }, [idleTaskIdxRef]);
 
 
   const mainFn: any = React.useCallback(() => {
     const timer = Math.random() * 1000;
-    alert(`run main task(${mainTaskCnt}) (delayTime: ${parseInt(timer.toString())}ms)`);
-    if(idleTasks.length-1 > mainTaskCnt++) {
+    alert(`run main task(${mainTaskCntRef}) (delayTime: ${parseInt(timer.toString())}ms)`);
+    if(idleTasks.length-1 > mainTaskCntRef.current++) {
       return setTimeout(mainFn, timer);
     }
-  }, []);
+  }, [mainTaskCntRef]);
 
   React.useEffect(() => {
     return () => {
       //@ts-ignore
       window.cancelIdleCallback(idleFn);
-      clearTimeout(timerId);
+      clearTimeout(timerIdRef.current);
     }
-  }, [idleFn, timerId]);
+  }, [idleFn, timerIdRef]);
 
   const runIdleTaskWithMainTask = React.useCallback(() => {
-    idleTaskIdx = 0;
-    mainTaskCnt = 0;
+    idleTaskIdxRef.current = 0;
+    mainTaskCntRef.current = 0;
     //@ts-ignore
     window.requestIdleCallback(idleFn);
-    timerId = mainFn();
-  }, [idleFn, mainFn])
+    timerIdRef.current = mainFn();
+  }, [idleFn, mainFn, timerIdRef, mainTaskCntRef, idleTaskIdxRef])
 
 
   return (
@@ -117,7 +117,7 @@ const BackgroundTask = () => {
               <Code>requestIdleCallback</Code> 은 할당 된 시간을 초과하지 않도록 해야한다.<br/>
               브라우저는 일반적으로 지정된 시간제한을 초과해도 정상적으로 계속 실행된다.<br/> 
               이벤트 루프를 통해 현재 패스를 끝내고 다른 코드가 버벅이거나 애니메이션 효과가 지연되지 않도록 한다.<br/>
-              <a href="https://developer.mozilla.org/en-US/docs/Web/API/IdleDeadline/timeRemaining" target="_blank">
+              <a href="https://developer.mozilla.org/en-US/docs/Web/API/IdleDeadline/timeRemaining" target="_blank" rel="noreferrer">
                 <Code>timeRemaining</Code>
               </a>를 보면 50밀리초의 상한선이 있으나, 실제로는 이벤트 프로세서 시간을 필요로 하는 브라우저 확장 등으로 인해 이미 그 시간이 적을 수 있다.
             </li>
