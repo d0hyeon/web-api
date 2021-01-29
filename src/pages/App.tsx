@@ -12,6 +12,7 @@ const ResizeObserverPage = React.lazy(() => import('@src/pages/ResizeObserver'))
 const Performance = React.lazy(() => import('@src/pages/Performance'));
 const PerformanceObserver = React.lazy(() => import('@src/pages/Performance/Observer'));
 const MediaStream = React.lazy(() => import('@src/pages/MediaStream'));
+const MediaStreamTrack = React.lazy(() => import('@src/pages/MediaStream/Track'));
 
 const App: React.FC = () => {
   return (
@@ -30,6 +31,7 @@ const App: React.FC = () => {
               <Route exact path="/performance" component={Performance} />
               <Route exact path="/performance/observer" component={PerformanceObserver} />
               <Route exact path="/media" component={MediaStream} />
+              <Route exact path="/media/track" component={MediaStreamTrack} />
             </main>
           </React.Suspense>
         </Switch>
