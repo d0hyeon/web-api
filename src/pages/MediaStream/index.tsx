@@ -7,6 +7,7 @@ const MediaStreamPage: React.FC = () => {
     <>
       <Header>
         <H1>Media Stream API</H1>
+        <P>미디어 스트림은 Web RTC에서 사용하는 MediaStream API이다. API는 스트림을 구성하는 트랙, 데이터 형식과 관련 된 제한 인자, 비동기적으로 사용할 때 성공과 오류 콜백 또 이 때 발생하는 이벤트에 대한 인터페이스다.</P>
         <P>미디어 스트림은 사용자의 입력 장치를 이용하여 오디오나 비디오의 데이터를 스트림으로 얻을 수 있게 API를 제공해준다.</P>
         <P>미디어 스트림은 <Code>MediaStreamTrack</Code>이란 오디오 또는 비디오 트랙을 나태내는 객체로 구성되어 있다.</P>
       </Header>
