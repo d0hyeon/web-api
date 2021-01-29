@@ -11,36 +11,22 @@ const MediaStreamTrackPage: React.FC = () => {
         <P>미디어 스트림은 오디오 트랙에서 왼쪽과 오른쪽 처럼 미디어의 가장 작은 단위인 채널을 하나 이상 가질 수 있다.</P>
       </Header>
       <Section>
-        <H2>Interface</H2>
-        <P>MediaStreamTrack은 아래와 같은 인터페이스로 구성되어 있다.</P>
+        <Header>
+          <H2>Interface</H2>
+          <P>MediaStreamTrack은 아래와 같은 인터페이스로 구성되어 있다.</P>
+        </Header>
         <Article>
           <H3>properties</H3>
           <Ul>
-            <li>
-              <P>enabled</P>
-              <P>트랙이 미디어 소스 스트림을 렌더링 할 수 있는 활성화 된 유뮤에 대한 boolean 값이다. 비활성화인 <Code>false</Code> 일 경우 미디어 소스 스트림을 렌더링 하는 것이 아닌 무음과 검은 색 화면으로 띄운다.</P>
-            </li>
+            <li>enabled : 트랙이 미디어 소스 스트림을 렌더링 할 수 있는 활성화 된 유뮤에 대한 boolean 값이다. 비활성화인 <Code>false</Code> 일 경우 미디어 소스 스트림을 렌더링 하는 것이 아닌 무음과 검은 색 화면으로 띄운다.</li>
             <li>id</li>
             <li>
-              <P>kind</P>
-              <P><Code>'audio' | 'video'</Code></P>
+              <P>kind : <Code>'audio' | 'video'</Code></P>
             </li>
-            <li>
-              <P>label</P>
-              <P>내부 마이크와 같이 트랙 소스를 식별하는 사용자 에이전트 할당 레이블을 포함하는 문자열이다. 연결 된 소스가 없다면 문자열은 빈값이다.</P>
-            </li>
-            <li>
-              <P>muted</P>
-              <P> 트랙이 기술적인 문제로 미디어 데이터를 제공 할 수 있는지에 대한 boolean값</P>
-            </li>
-            <li>
-              <P>readystate</P>
-              <P><Code>'live' | 'ended'</Code></P>
-            </li>
-            <li>
-              <P>remote</P>
-              <P>트랙이 원격 WebRTC에서 온 트랙인지 로컬 트랙인지에 대한 boolean값</P>
-            </li>
+            <li>label : 내부 마이크와 같이 트랙 소스를 식별하는 사용자 에이전트 할당 레이블을 포함하는 문자열이다. 연결 된 소스가 없다면 문자열은 빈값이다.</li>
+            <li>muted : 트랙이 기술적인 문제로 미디어 데이터를 제공 할 수 있는지에 대한 boolean값</li>
+            <li>readystate : <Code>'live' | 'ended'</Code></li>
+            <li>remote : 트랙이 원격 WebRTC에서 온 트랙인지 로컬 트랙인지에 대한 boolean값</li>
           </Ul>
         </Article>
         <Article>
@@ -67,31 +53,15 @@ const MediaStreamTrackPage: React.FC = () => {
                   <li>frameRate</li>
                   <li>height</li>
                   <li>width</li>
-                  <li>cursor(이하 screen전용) : 마우스 커서가 움직이지 않을 떄 노출에 대한 설정 - always, motion, never</li>
+                  <li>cursor (이하 screen전용) : 마우스 커서가 움직이지 않을 떄 노출에 대한 설정 - always, motion, never</li>
                   <li>displaySurface : 표시 할 화면에 대한 설정 - application, browser, monitor, window</li>
                 </Ul>
               </P>
             </li>
-            <li>
-              <P>clone</P>
-              <P>트랙을 복사한다.</P>
-            </li>
-            <li>
-              <P>getCapabilities</P>
-              <P>트랙에서 사용 할 수 있는 제한 가능한 속성 목록을 반환한다.</P>
-            </li>
-            <li>
-              <P>getConstraints</P>
-              <P>현재 설정 된 제약조건을 반환한다.</P>
-            </li>
-            <li>
-              <P>getSettings</P>
-              <P>이건 잘 모르겠..</P>
-            </li>
-            <li>
-              <P>stop</P>
-              <P>트랙에 연결 된 소스 재생을 중지하고 소스와 트랙 모두 연결을 해제한다.</P>
-            </li>
+            <li>clone : 트랙을 복사한다.</li>
+            <li>getCapabilities : 트랙에서 사용 할 수 있는 제한 가능한 속성 목록을 반환한다.</li>
+            <li>getConstraints : 현재 설정 된 제약조건을 반환한다.</li>
+            <li>stop : 트랙에 연결 된 소스 재생을 중지하고 소스와 트랙 모두 연결을 해제한다.</li>
           </Ul>
         </Article>
         <Article>
@@ -105,4 +75,7 @@ const MediaStreamTrackPage: React.FC = () => {
       </Section>
     </>
   )
-}
+};
+
+MediaStreamTrackPage.displayName = 'MediaStreamTrackPage';
+export default MediaStreamTrackPage;
