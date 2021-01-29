@@ -108,6 +108,15 @@ console.log(records[0]);
             ))}
           </Ul>
         </Section>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+        <Section>
+          <H3>해당 페이지의 로딩속도저하 원인</H3>
+          <Ul>
+            <li>1. font 파일 로딩 </li>
+            <li>2. highlight 모듈 로딩 - 호출과 사용의 비용이 상당함.</li>
+            <li>3. 토글 컴포넌트 내의 highlight 마운트 (닫혀있는데 불필요한 마운트)</li>
+          </Ul>
+        </Section>
     </>
   )
 }
