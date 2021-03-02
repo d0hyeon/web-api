@@ -11,6 +11,7 @@
     "@types/react-dom": "^17.0.0",
     "@types/react-highlight": "^0.12.2",
     "date-fns": "^2.16.1",
+    "dotenv-webpack": "^6.0.2",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
