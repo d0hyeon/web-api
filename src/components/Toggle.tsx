@@ -116,7 +116,7 @@ interface StyledProps {
 export const Title = styled.div<Pick<StyledProps, 'isOpen' | 'duration'>>`
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  padding-bottom: 8px;
   cursor: pointer;
   &::before {
     margin-right: 8px;
