@@ -13,11 +13,11 @@ export const H4 = styled.h4`
   font-size: 22px;
 `;
 export const H5 = styled.h5`
-  font-size: 18px;
+  font-size: 20px;
 `;
 
 export const P = styled.p`
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.4;
 
   & ~ & {
