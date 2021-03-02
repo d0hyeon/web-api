@@ -78,7 +78,7 @@ const AsyncToggle: React.FC<Props> = ({title, children, duration = 300}) => {
       // 열때
       setIsOpen(true);
     }
-  }, [isOpen, isAnimating, setIsOpen, setIsInit, lastHeightRef, duration]);
+  }, [isOpen, isAnimating, setIsOpen, lastHeightRef, duration]);
 
   const setContents = React.useCallback((value: NodeHTML) => {
     if(value instanceof String) {

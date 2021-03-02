@@ -71,7 +71,7 @@ const Toggle: React.FC<ToggleProps> = ({title, children, duration = 300}) => {
       // 열때
       setIsOpen(true);
     }
-  }, [isOpen, isAnimating, setIsOpen, setIsInit, lastHeightRef, duration]);
+  }, [isOpen, isAnimating, setIsOpen, lastHeightRef, duration]);
   
   React.useEffect(() => {
     if(isOpen) {
