@@ -145,6 +145,7 @@ export const Content = styled.div<Omit<StyledProps, 'isOpen'>>`
       z-index: -9999;
       height: auto;
       visibility: hidden;
+      opacity: 0;
     `}
   `};
 `
