@@ -17,15 +17,25 @@ const Performance: React.FC = () => {
         <Ul>
           <li>
             <strong>memory</strong>
-            <P>기본 메모리 사용 정보 객체를 제공한다.</P>
             <P>
-              {/* @ts-ignore */}
-              jsHeapSizeLimit: <Code>{performance?.memory?.jsHeapSizeLimit}</Code> / 
-              {/* @ts-ignore */}  
-              totalJSHeapSize: <Code>{performance.memory.totalJSHeapSize}</Code> / 
-              {/* @ts-ignore */}
-              usedJSHeapSize: <Code>{performance.memory.usedJSHeapSize}</Code>
+              기본 메모리 사용 정보 객체를 제공한다.<br/>
+              jsHeapSizeLimit, totalJsHeapSize, usedJSHeapSize 세가지를 제공한다.
             </P>
+            <br/>
+            <Ul>
+              <li>
+                {/* @ts-ignore */}
+                jsHeapSizeLimit - 컨텍스트에서 사용 할 수 있는 최대 힙 사이즈 <Code>{performance?.memory?.jsHeapSizeLimit?.toLocaleString()} byte</Code>
+              </li>
+              <li>
+                {/* @ts-ignore */}  
+                totalJSHeapSize - 할당 된 총 힙 사이즈 <Code>{performance.memory.totalJSHeapSize?.toLocaleString()} byte</Code>
+              </li>
+              <li>
+                {/* @ts-ignore */}  
+                usedJSHeapSize - 현재 활성화 된 힙 사이즈 <Code>{performance.memory.usedJSHeapSize?.toLocaleString()} byte</Code>
+              </li>
+            </Ul>
           </li>
           <li>
             <strong>timeOrigin</strong>
