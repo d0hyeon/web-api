@@ -9,14 +9,16 @@ type RequestIdleCallbackArgument = {
   timeRemaining: () => number;
 }
 type RequestIdleHandler = (handler: RequestIdleCallbackArgument) => void;
+
 declare global {
+  type RequestIdleCallback = (callback: RequestIdleHandler) => any;
+  type CancelIdleCallback = (id: any) => void;
   interface Window {
-    requestIdleCallback: ((callback: RequestIdleHandler) => any) | null
-    cancelIdleCallback: ((id: any) => void) | null;
+    requestIdleCallback: RequestIdleCallback;
+    cancelIdleCallback: CancelIdleCallback;
   }
 };
-
-const idleTasks = [() => alert('run idle task 1'), () => alert('run idle task 2'),() => alert('run idle task 3'),() => alert('run idle task 4')];
+const MAX_LOOP_COUNT = 5;
 
 const BackgroundTask: React.FC = () => {
   const idleTaskIdxRef = React.useRef<number>(0);
@@ -43,49 +45,58 @@ const BackgroundTask: React.FC = () => {
     window.cancelIdleCallback = window.cancelIdleCallback || function(id: any) {
       clearTimeout(id);
     }
-
-    return () => {
-      if(!isSupport) {
-        window.requestIdleCallback = null;
-        window.cancelIdleCallback = null;
-      }
-    }
   }, []);
 
-  const idleFn = React.useCallback((idle) => {
-    idleTasks[idleTaskIdxRef.current](); 
+  const idleLoopFn = React.useCallback((idle) => {
+    alert(`[idle]\nrun ${idleTaskIdxRef.current}th (delayTime: ${idle.timeRemaining()})`);
+    
     console.log(idle.didTimeout, idle.timeRemaining());
-    if(idleTasks.length-1 > idleTaskIdxRef.current++) {
+    if(MAX_LOOP_COUNT > idleTaskIdxRef.current++) {
       //@ts-ignore
-      window.requestIdleCallback(idleFn);
+      window.requestIdleCallback(idleLoopFn);
     }
   }, [idleTaskIdxRef]);
-
-
-  const mainFn: any = React.useCallback(() => {
+  const mainLoopFn: any = React.useCallback(() => {
     const timer = Math.random() * 1000;
-    alert(`run main task(${mainTaskCntRef}) (delayTime: ${parseInt(timer.toString())}ms)`);
-    if(idleTasks.length-1 > mainTaskCntRef.current++) {
-      return setTimeout(mainFn, timer);
+    alert(`[main]\nrun task(${mainTaskCntRef.current}) (delayTime: ${parseInt(timer.toString())}ms)`);
+    if(MAX_LOOP_COUNT > mainTaskCntRef.current++) {
+      return setTimeout(mainLoopFn, timer);
     }
   }, [mainTaskCntRef]);
+
+  const runLoopTaskTiming = React.useCallback(() => {
+    idleTaskIdxRef.current = 0;
+    mainTaskCntRef.current = 0;
+    //@ts-ignore
+    window.requestIdleCallback(idleLoopFn);
+    timerIdRef.current = mainLoopFn();
+  }, [idleLoopFn, mainLoopFn, timerIdRef, mainTaskCntRef, idleTaskIdxRef]);
+
+  const runAsyncTaskOrder = React.useCallback(() => {
+    window.requestIdleCallback((idle) => {
+      console.log(idle, idle.timeRemaining());
+      alert('run requestIdleCallback');
+    })
+    requestAnimationFrame((time) => {
+      console.log(time);
+      alert('run requestAnimationFrame');
+      return 1;
+    });
+    Promise.resolve().then(() => {
+      alert('run promise');
+    })
+    setTimeout(() => {
+      alert('run setTimeout');
+    }, 0)
+  }, []);
 
   React.useEffect(() => {
     return () => {
       //@ts-ignore
-      window.cancelIdleCallback(idleFn);
+      window.cancelIdleCallback(idleLoopFn);
       clearTimeout(timerIdRef.current);
     }
-  }, [idleFn, timerIdRef]);
-
-  const runIdleTaskWithMainTask = React.useCallback(() => {
-    idleTaskIdxRef.current = 0;
-    mainTaskCntRef.current = 0;
-    //@ts-ignore
-    window.requestIdleCallback(idleFn);
-    timerIdRef.current = mainFn();
-  }, [idleFn, mainFn, timerIdRef, mainTaskCntRef, idleTaskIdxRef])
-
+  }, [idleLoopFn, timerIdRef]);
 
   return (
     <>
@@ -151,7 +162,10 @@ const BackgroundTask: React.FC = () => {
           이 때 delay시간으로 인해 idle상태가 될 수 있는데 이 때 idleCallback이 실행 된다.
         </P>
         <P>
-          <Button onClick={runIdleTaskWithMainTask}>체험해보기</Button>
+          <Button onClick={runAsyncTaskOrder}>체험해보기(실행순서)</Button>
+        </P>
+        <P>
+          <Button onClick={runLoopTaskTiming}>체험해보기(반복처리)</Button>
         </P>
       </Section>
     </>
