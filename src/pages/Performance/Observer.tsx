@@ -2,7 +2,6 @@ import React from 'react';
 import { P, Code, H1, H2, H3 } from '@src/components/styles/text';
 import { Header, Section, Ul } from '@src/components/styles/common';
 import Toggle from '@src/components/Toggle';
-import AsyncToggle from '@src/components/AsyncToggle';
 import PerformanceTestButton from '@src/components/PerformanceTestButton';
 
 
@@ -39,38 +38,6 @@ const Ovserver: React.FC = () => {
     return React.lazy(() => import('react-highlight'));
   }, []);
 
-  const images = (process.env.REACT_APP_DUMP_IMAGES as string).split(',');
-
-  const getContents = React.useCallback((open) => {
-    const content = (
-      <>
-        {images.map((url, idx) => (
-          <p key={`${url}-${idx}`}>
-            <img src={url} width="100" alt="person"/>
-          </p>
-        ))}
-        <React.Suspense fallback={null}>
-          {/* @ts-ignore */}
-          <Highlight>
-            <div>{`
-      observer.observe({entryTypes: ['mark', 'measure']});
-      const records = observer.takeRecords();
-      console.log(records[0]);
-              `.trim()}
-            </div>
-          </Highlight>
-        </React.Suspense>
-    </>
-    )
-    if(open) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve(content);
-        }, 500)
-      })
-    }
-  }, [images, Highlight]);
-
   React.useEffect(() => {
     observer.observe({entryTypes: ['mark', 'measure']});
     
@@ -85,25 +52,17 @@ const Ovserver: React.FC = () => {
           <P>PerfomanceObserver는 성능 측정 이벤트를 관찰하고 브라우저의 성능 타임라인에 기록 되는 항목에 대한 알림을 받는다.</P>
           <Toggle title={<P>예제</P>}>
             <React.Suspense fallback="">
-              <>  
-                {/* @ts-ignore */}
-                <Highlight>
+              {/* @ts-ignore */}
+              <Highlight>
 {`
 const observer = new PerformanceObserver(list => {
 const entries = list.getEntries();
-    
-  for(let i = 0, length = entries; i < length; i ++) {
-    console.log(entries[i]);
-  }
+  
+for(let i = 0, length = entries; i < length; i ++) {
+  console.log(entries[i]);
+}
 })`.trim()}
-                </Highlight>
-                <img src={images[0]} alt="person"/>
-                {images.map((url) => (
-                  <p key={url}>
-                    <img src={url} width="100" alt="person"/>
-                  </p>
-                ))}
-              </>
+              </Highlight>
             </React.Suspense>
           </Toggle>
         </Header>
@@ -127,9 +86,6 @@ const entries = list.getEntries();
               <li>
                 <P>takeRecoreds</P>
                 <P>측정 된 값을 기록한다</P>
-                <AsyncToggle title={<P>예제</P>} >
-                  {getContents}
-                </AsyncToggle>
                 <Toggle title={<P>예제</P>}>
                   <React.Suspense fallback="">
                     {/* @ts-ignore */}

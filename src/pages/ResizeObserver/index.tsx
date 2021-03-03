@@ -3,14 +3,36 @@ import styled from '@emotion/styled';
 import { Header, Section } from '@src/components/styles/common';
 import { H1, H2, P, Code, Em } from '@src/components/styles/text';
 import Toggle from '@src/components/Toggle';
+import Async from '@src/components/AsyncToggle';
 
 const MY_TEXT = '낮엔 파란하늘\n 별이 보이는밤 \n 기분좋은날 모두 모일까 내가사랑하는 삶을 사랑하지 나는\n 우야야야야\n'
+const IMAGES = (process.env.REACT_APP_DUMP_IMAGES ?? '').split(',');
 
 const ResizeObserverPage: React.FC = () => {
   const [text, setText] = React.useState<string>('');
   const addTextHandler = React.useCallback(() => {
     setText(prev => !!prev ? '' : MY_TEXT);
   }, [setText]);
+
+  const getContents = React.useCallback((open) => {
+    const content = (
+      <>
+        {IMAGES.map((url, idx) => (
+          <p key={`${url}-${idx}`}>
+            <img src={url} width="100" alt="person"/>
+          </p>
+        ))}
+    </>
+    )
+    if(open) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve(content);
+        }, 500)
+      })
+    }
+  }, []);
+
   return (
     <>
       <Header>
@@ -30,7 +52,7 @@ const ResizeObserverPage: React.FC = () => {
           Resize Observer API는 이러한 문제에 대한 솔루션을 제공하고 요소의 박스 모델 크기 변경을 성능적으로 제공한다.
         </P>
         <ExampleSection>
-          <Toggle title={<P>예제~~</P>}>
+          <Toggle title={<P>예제(텍스트)</P>}>
             <P>해당 컴포넌트는 Resize Observer API를 통해 엘리먼트의 사이즈를 구하고<br/> style 속성 중 height 속성을 스위칭 시키는 형태의 컴포넌트이다.</P>
             <div>
               {!!text && text.split('\n').map(text => (
@@ -38,9 +60,25 @@ const ResizeObserverPage: React.FC = () => {
                     {text}
                   </P>
               ))}
-              <P onClick={addTextHandler}><Em>날 눌러봐~~</Em></P>
+              <P onClick={addTextHandler}><Em>텍스트 추가</Em></P>
             </div>
           </Toggle>
+        </ExampleSection>
+        <ExampleSection>
+          <Toggle title={<P>예제(이미지)</P>} duration={700}>
+            <>
+              {IMAGES.map(url => (
+                <p key={url}>
+                  <img src={url} alt="banner" />
+                </p>
+              ))}
+            </>
+          </Toggle>
+        </ExampleSection>
+        <ExampleSection>
+          <Async title={<P>예제(비동기)</P>}>
+            {getContents}
+          </Async>
         </ExampleSection>
       </Section>
     </>
