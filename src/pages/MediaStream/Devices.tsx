@@ -1,8 +1,7 @@
 import React from 'react';
-import { Header, Section, Ul } from '@src/components/styles/common';
+import { Button, Header, Section, Ul } from '@src/components/styles/common';
 import { Code, H1, H2, P } from '@src/components/styles/text';
 import Toggle from '@src/components/Toggle';
-import { de } from 'date-fns/locale';
 
 interface EnumerateDevices {
   deviceId: string;
@@ -13,12 +12,41 @@ interface EnumerateDevices {
 
 const MediaDevices: React.FC = () => {
   const [enumerateDevices, setEnumerateDevices] = React.useState<EnumerateDevices[]>([]);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+
   React.useEffect(() => {
     navigator.mediaDevices.enumerateDevices()
       .then(devices => {
         setEnumerateDevices(devices);
       })
   }, []);
+
+  const constraints: MediaStreamConstraints = {
+    audio: true,
+    video: true
+    // video: {
+    //   width: { max: 1920, ideal: 1600},
+    // }
+  }
+
+  const runUserMedia = React.useCallback(() => {
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then(mediaStream => {
+        if(videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+        }
+      })
+  }, [videoRef]);
+
+  const runDisplayMedia = React.useCallback(() => {
+    // @ts-ignore
+    navigator.mediaDevices.getDisplayMedia(constraints)
+    .then((mediaStream: MediaStream) => {
+      if(videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+      }
+    })
+  }, [videoRef]);
 
   return (
     <>
@@ -61,7 +89,17 @@ const MediaDevices: React.FC = () => {
             ))}
           </Ul>
         </Toggle>
-        
+        <Section>
+          <P>
+            <Button onClick={runUserMedia}>getUserMedia</Button>
+          </P>
+          <P>
+            <Button onClick={runDisplayMedia}>getDisplayMedia</Button>
+          </P>
+        </Section>
+        <Section>
+          <video ref={videoRef} autoPlay style={{maxWidth: '1000px'}} />
+        </Section>
       </Section>
     </>
   )
