@@ -29,6 +29,7 @@ export const Em = styled.em`
   font-weight: inherit;
   font-style: normal;
 `;
+
 export const Code = styled.code`
   background-color: rgba(135,131,120,0.15);
   color: #C43326;
@@ -38,4 +39,22 @@ export const Code = styled.code`
   word-break: break-word;
   vertical-align: middle;
   font-family: inherit;
-`
+`;
+export const CodeKeyword = styled.span`
+  color: #071D9B;
+`;
+
+export const CodeTitle = styled.span`
+  color: #029316;
+`;
+
+export const CodeBlock = styled.span`
+  color: #666;
+`;
+
+export const CodeValue = styled.span`
+  color: #C43326;
+`;
+
+
+
