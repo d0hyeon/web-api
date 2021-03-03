@@ -1,6 +1,7 @@
 import React from 'react';
 import { Article, Header, Section, Ul } from '@src/components/styles/common';
-import { H1, H2, H3, P, Code } from '@src/components/styles/text';
+import { H1, H2, H3, P, Code, Em, CodeKeyword, CodeTitle, CodeBlock, CodeValue } from '@src/components/styles/text';
+
 
 const MediaStreamTrackPage: React.FC = () => {
   return (
@@ -33,14 +34,14 @@ const MediaStreamTrackPage: React.FC = () => {
           <H3>methods</H3>
           <Ul>
             <li>
-              <P>applyConstraints([constraints])</P>
+              <P>applyConstraints([constraints: <Code>constraints: MediaTrackConstraints</Code>])</P>
               <P>트랙에 제약 조건을 적용한다. 제약 조건은 웹사이트나 앱이 프레임률, 치수, 에코 등과 같은 속성에 대해 이상적인 값과 허용 가능한 값의 범위를 설정한다.</P>
               <P>
                 <Code>MediaTrackConstraints</Code>는 다음과 같은 속성이 있다.
                 <Ul>
                   <li>deviceId</li>
                   <li>groupId</li>
-                  <li>autoGainControl(이하 audio전용)</li>
+                  <li>autoGainControl <Em>(이하 audio전용)</Em></li>
                   <li>channelCount</li>
                   <li>echoCancellation</li>
                   <li>latency</li>
@@ -48,12 +49,28 @@ const MediaStreamTrackPage: React.FC = () => {
                   <li>sampleRate</li>
                   <li>sampleSize</li>
                   <li>volume</li>
-                  <li>aspectRatio(이하 video전용)</li>
-                  <li>facingMode</li>
+                  <li>aspectRatio <Em>(이하 video전용)</Em></li>
+                  <li>
+                    <P>
+                      facingMode<br/>
+                      <Code>
+                        <CodeKeyword>type&nbsp;</CodeKeyword> 
+                        <CodeTitle>FacingMode</CodeTitle> = &nbsp;
+                        <CodeBlock>
+                          {"{"} exact: '<CodeValue>user</CodeValue>' | '<CodeValue>environment</CodeValue>' | '<CodeValue>left</CodeValue>' | '<CodeValue>right</CodeValue>' {"}"}
+                        </CodeBlock>
+                      </Code>
+                    </P>
+                    <Ul>
+                      <li>user - 비디오 소스가 사용자를 향하고 있음 ex) 스마트폰 전면 카메라</li>
+                      <li>environment - 비디오 소스가 사용자 반대방향을 항하고 있음. 사용자의 환경을 볼 수 있다.</li>
+                      <li><Code>left</Code> | <Code>right</Code> - 비디오 소스가 사용자를 향하고 있지만 좌측 또는 우측을 포함하고 있다.</li>
+                    </Ul>
+                  </li>
                   <li>frameRate</li>
                   <li>height</li>
                   <li>width</li>
-                  <li>cursor (이하 screen전용) : 마우스 커서가 움직이지 않을 떄 노출에 대한 설정 - always, motion, never</li>
+                  <li>cursor <Em>(이하 screen전용)</Em> : 마우스 커서가 움직이지 않을 떄 노출에 대한 설정 - always, motion, never</li>
                   <li>displaySurface : 표시 할 화면에 대한 설정 - application, browser, monitor, window</li>
                 </Ul>
               </P>
