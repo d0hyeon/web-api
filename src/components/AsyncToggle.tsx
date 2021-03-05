@@ -28,7 +28,7 @@ const AsyncToggle: React.FC<Props> = ({title, children, duration = 300}) => {
     if(isOpen && height) {
       lastHeightRef.current = height;
     }
-  }, [isOpen, isInit, lastHeightRef]);
+  }, [isOpen, lastHeightRef]);
 
   React.useLayoutEffect(() => {
     ob.register(contentRef.current as HTMLDivElement, resizeHandler);
@@ -47,14 +47,15 @@ const AsyncToggle: React.FC<Props> = ({title, children, duration = 300}) => {
           : 'auto'
       });
     };
-    contentRef.current?.addEventListener('transitionstart', transitionStartHandler);
-    contentRef.current?.addEventListener('transitionend', transitionEndHandler);
-    contentRef.current?.addEventListener('transitioncancel', transitionCancleHandler);
+    const {current} = contentRef;
+    contentRef.current?.addEventListener?.('transitionstart', transitionStartHandler);
+    contentRef.current?.addEventListener?.('transitionend', transitionEndHandler);
+    contentRef.current?.addEventListener?.('transitioncancel', transitionCancleHandler);
 
     return () => {
-      contentRef.current?.removeEventListener('transitionstart', transitionStartHandler);
-      contentRef.current?.removeEventListener('transitionend', transitionEndHandler);
-      contentRef.current?.removeEventListener('transitioncancel', transitionCancleHandler);
+      current?.removeEventListener?.('transitionstart', transitionStartHandler);
+      current?.removeEventListener?.('transitionend', transitionEndHandler);
+      current?.removeEventListener?.('transitioncancel', transitionCancleHandler);
     }
   }, [contentRef, setHeightValue, setIsAnimating]);
 
