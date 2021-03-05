@@ -13,7 +13,7 @@ export const CATEGORIES: Menu[] = [
   {url: '/broadcast/:channelId', path: '/Broadcast/detail'},
   {title: 'Background Task', url: '/background', path: '/BackgroundTask'},
   {title: 'Resize Observer', url: '/resize', path: '/ResizeObserver'},
-  {title: 'Performance', url: '/performance', path: 'Performance'},
+  {title: 'Performance', url: '/performance', path: '/Performance'},
   {title: 'PerformanceObserver', url: '/performance/observer', path: '/Performance/Observer'},
   {title: 'MediaStream', url: '/media', path: '/MediaStream'},
   {title: 'MediaStreamTrack', url: '/media/track', path: '/MediaStream/Track'},
