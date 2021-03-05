@@ -14,6 +14,7 @@ const PerformanceObserver = React.lazy(() => import('@src/pages/Performance/Obse
 const MediaStream = React.lazy(() => import('@src/pages/MediaStream'));
 const MediaStreamTrack = React.lazy(() => import('@src/pages/MediaStream/Track'));
 const MediaDevice = React.lazy(() => import('@src/pages/MediaStream/Devices'));
+const WebGL = React.lazy(() => import('@src/pages/WebGL'));
 
 const App: React.FC = () => {
   return (
@@ -34,6 +35,7 @@ const App: React.FC = () => {
               <Route exact path="/media" component={MediaStream} />
               <Route exact path="/media/track" component={MediaStreamTrack} />
               <Route exact path="/media/devices" component={MediaDevice} />
+              <Route exact path="/webgl" component={WebGL} />
             </main>
           </React.Suspense>
         </Switch>
@@ -63,6 +65,7 @@ const globalCss = css`
     padding: 0;
     box-sizing: border-box;
     line-height: 1;
+    max-width: 100%;
   }
 
   html {
