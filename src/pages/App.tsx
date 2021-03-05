@@ -1,22 +1,20 @@
 import React from 'react';
-import {BrowserRouter, Switch, Route} from 'react-router-dom'
+import {BrowserRouter, Switch, Route, useParams} from 'react-router-dom'
 import {Global, css} from '@emotion/react';
 import styled from '@emotion/styled';
-import Navigate from '@src/components/layout/Navigate';
+import Navigate, { CATEGORIES } from '@src/components/layout/Navigate';
 
 const Home = React.lazy(() => import('@src/pages/Home'));
-const BroadCastChannel = React.lazy(() => import('@src/pages/Broadcast'));
-const BroadCastChannelDetail = React.lazy(() => import('@src/pages/Broadcast/detail'));
-const BackgroundTask = React.lazy(() => import('@src/pages/BackgroundTask'));
-const ResizeObserverPage = React.lazy(() => import('@src/pages/ResizeObserver'));
-const Performance = React.lazy(() => import('@src/pages/Performance'));
-const PerformanceObserver = React.lazy(() => import('@src/pages/Performance/Observer'));
-const MediaStream = React.lazy(() => import('@src/pages/MediaStream'));
-const MediaStreamTrack = React.lazy(() => import('@src/pages/MediaStream/Track'));
-const MediaDevice = React.lazy(() => import('@src/pages/MediaStream/Devices'));
-const WebGL = React.lazy(() => import('@src/pages/WebGL'));
+type ComponentMap = {[key: string]: React.ComponentType};
 
 const App: React.FC = () => {
+  const componentMap: ComponentMap = React.useMemo(() => {
+    let map:ComponentMap = {};
+    CATEGORIES.forEach(({path}) => {
+      map[path] = React.lazy(() => import(`@src/pages${path}`));
+    })
+    return map;
+  }, []);
   return (
     <Layout>
       <Global styles={globalCss} />
@@ -25,17 +23,10 @@ const App: React.FC = () => {
         <Switch>
           <React.Suspense fallback="">
             <main className="content">
-              <Route exact path="/" component={Home}/> 
-              <Route exact path="/broadcast" component={BroadCastChannel} />
-              <Route exact path="/broadcast/:channelId" component={BroadCastChannelDetail} />
-              <Route exact path="/background" component={BackgroundTask} />
-              <Route exact path="/resize" component={ResizeObserverPage} />
-              <Route exact path="/performance" component={Performance} />
-              <Route exact path="/performance/observer" component={PerformanceObserver} />
-              <Route exact path="/media" component={MediaStream} />
-              <Route exact path="/media/track" component={MediaStreamTrack} />
-              <Route exact path="/media/devices" component={MediaDevice} />
-              <Route exact path="/webgl" component={WebGL} />
+              <Route exact path="/" component={Home}/>
+              {CATEGORIES.map(({url, path}) => (
+                <Route exact path={url} component={componentMap[path]} />
+              ))}
             </main>
           </React.Suspense>
         </Switch>
