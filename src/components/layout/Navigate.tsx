@@ -3,20 +3,23 @@ import {NavLink} from 'react-router-dom';
 import styled from '@emotion/styled';
 
 type Menu = {
-  title: string;
+  title?: string;
+  url: string;
   path: string;
 }
 
-const CATEGORIES: Menu[] = [
-  {title: 'BroadCast Channel', path: '/broadcast'},
-  {title: 'Background Task', path: '/background'},
-  {title: 'Resize Observer', path: '/resize'},
-  {title: 'Performance', path: '/performance'},
-  {title: 'PerformanceObserver', path: '/performance/observer'},
-  {title: 'MediaStream', path: '/media'},
-  {title: 'MediaStreamTrack', path: '/media/track'},
-  {title: 'MediaDevices', path: '/media/devices'},
-  {title: 'WebGL', path: '/webgl'}
+export const CATEGORIES: Menu[] = [
+  {title: 'BroadCast Channel', url: '/broadcast', path: '/Broadcast'},
+  {url: '/broadcast/:channelId', path: '/Broadcast/detail'},
+  {title: 'Background Task', url: '/background', path: '/BackgroundTask'},
+  {title: 'Resize Observer', url: '/resize', path: '/ResizeObserver'},
+  {title: 'Performance', url: '/performance', path: 'Performance'},
+  {title: 'PerformanceObserver', url: '/performance/observer', path: '/Performance/Observer'},
+  {title: 'MediaStream', url: '/media', path: '/MediaStream'},
+  {title: 'MediaStreamTrack', url: '/media/track', path: '/MediaStream/Track'},
+  {title: 'MediaDevices', url: '/media/devices', path: '/MediaStream/Devices'},
+  {title: 'WebRTC', url: '/webrtc', path: '/WebRTC'},
+  {title: 'WebGL', url: '/webgl', path: '/WebGL'}
 ]
 
 const Navigate: React.FC = () => {
@@ -25,9 +28,9 @@ const Navigate: React.FC = () => {
     <Wrapper className="navigate">
       <Title>목차</Title>
       <MenuList>
-        {CATEGORIES.map(({title, path}) => (
+        {CATEGORIES.map(({title, url}) => title && (
           <li key={title}>
-            <NavLink to={path} activeStyle={{color: '#C43326'}} exact>{title}</NavLink>
+            <NavLink to={url} activeStyle={{color: '#C43326'}} exact>{title}</NavLink>
           </li>
         ))}
       </MenuList>
