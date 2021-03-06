@@ -28,8 +28,7 @@ export const Article = styled.article`
   }
 `
 
-
-export const Button = styled.button`
+export const Button = styled.button<{disabled?: boolean}>`
   min-width: 100px;
   height: 30px;
   padding: 0 10px;
@@ -37,6 +36,9 @@ export const Button = styled.button`
   color: #666 ;
   line-height: 28px;
   font-size: 14px;
+  ${({disabled}) => disabled && `
+    opacity: 0.6;
+  `}
 `;
 
 export const Ul = styled.ul`
