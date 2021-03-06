@@ -1,7 +1,7 @@
 import React, { MutableRefObject } from 'react';
 import styled from '@emotion/styled';
 import { Article, Button, Header, Section } from '@src/components/styles/common';
-import { Code, H1, H2, P } from '@src/components/styles/text';
+import { H1, H2, P } from '@src/components/styles/text';
 
 const WebRTC: React.FC = () => {
   const localDisabledTracks = React.useRef<MediaStreamTrack[]>([]);
@@ -9,12 +9,11 @@ const WebRTC: React.FC = () => {
   const remoteVideoRef = React.useRef<HTMLVideoElement>(null);
   const userMediaStreamRef: MutableRefObject<null | MediaStream> = React.useRef(null);
   
+  const [isPlay, setIsPlay] = React.useState<boolean>(false);
   const [isVideo, setIsVideo] = React.useState<boolean>(true);
   const [isAudio, setIsAudio] = React.useState<boolean>(true);
-  const [localPeerConnection, remotePeerConnection]:[RTCPeerConnection, RTCPeerConnection] = React.useMemo(() => ([
-    new RTCPeerConnection(),
-    new RTCPeerConnection()
-  ]), []);
+  const [localPeerConnection, setLocalPeerConnection] = React.useState<RTCPeerConnection | null>(null);
+  const [remotePeerConnection, setRemotePeerConnection] = React.useState<RTCPeerConnection| null>(null);
   
   const requestGetUserMedia = React.useCallback(() => {
     const constraints = {
@@ -28,6 +27,23 @@ const WebRTC: React.FC = () => {
       });
   }, [localVideoRef, isVideo, isAudio, userMediaStreamRef]);
 
+  const closeUserMedia = React.useCallback(() => {
+    if(remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = null;
+    }
+    (userMediaStreamRef.current?.getTracks?.() ?? [])
+      .forEach(track => track.stop());
+    
+    setLocalPeerConnection(peerConnection => {
+      peerConnection?.close();
+      return null
+    });
+    setRemotePeerConnection(peerConnection => {
+      peerConnection?.close();
+      return null;
+    })
+  }, [userMediaStreamRef, remoteVideoRef, setLocalPeerConnection, setRemotePeerConnection])
+
   const handleConnection = React.useCallback((event) => {
     const peerConnection = event.target;
     const iceCandidate = event.candidate;
@@ -37,20 +53,18 @@ const WebRTC: React.FC = () => {
       const otherPeer = peerConnection === localPeerConnection
         ? remotePeerConnection 
         : localPeerConnection;
-
-      otherPeer.addIceCandidate(newIceCandidate)
+      otherPeer!.addIceCandidate(newIceCandidate)
     }
   }, [localPeerConnection, remotePeerConnection]);
 
   const onLoadLocalVideoMedaDataHandler = React.useCallback((event) => {
     const {current: localVideo} = localVideoRef;
-    if(localVideo) {
+    
+    if(localVideo && localPeerConnection && remotePeerConnection) {
       const {target: {srcObject}} = event;
-      const videoTrack = (srcObject as MediaStream).getVideoTracks();
-      const audioTracks = (srcObject as MediaStream).getAudioTracks();
+      const tracks = (srcObject as MediaStream).getTracks();
       
-      localPeerConnection.addTrack(videoTrack[0]);
-      audioTracks.forEach(track => localPeerConnection.addTrack(track));
+      tracks.forEach(track => localPeerConnection.addTrack(track));
       localPeerConnection.createOffer({offerToReceiveVideo: true})
         .then(description => {
           localPeerConnection.setLocalDescription(description);
@@ -64,6 +78,10 @@ const WebRTC: React.FC = () => {
       });
     }
   }, [localVideoRef, localPeerConnection, remotePeerConnection]);
+
+  const togglePlay = React.useCallback(() => {
+    setIsPlay(curr => !curr);
+  }, [setIsPlay]);
 
   const toggleTracks = React.useCallback((kind: 'video' | 'audio'): MediaStream => {
     const {current: userMediaStream} = userMediaStreamRef;
@@ -102,6 +120,16 @@ const WebRTC: React.FC = () => {
   }, [setIsAudio]);
 
   React.useEffect(() => {
+    if(isPlay) {
+      requestGetUserMedia(); 
+      setLocalPeerConnection(new RTCPeerConnection())
+      setRemotePeerConnection(new RTCPeerConnection());
+    } else {
+      closeUserMedia();
+    }
+  }, [isPlay, closeUserMedia, requestGetUserMedia]);
+
+  React.useEffect(() => {
     if(userMediaStreamRef.current) {
       const mediaStream = toggleTracks('audio');
       userMediaStreamRef.current = mediaStream;
@@ -112,7 +140,6 @@ const WebRTC: React.FC = () => {
     if(userMediaStreamRef.current) {
       const mediaStream = toggleTracks('audio');
       userMediaStreamRef.current = mediaStream;
-      // localVideoRef.current!.srcObject = mediaStream;
     }
   }, [isVideo, toggleTracks, userMediaStreamRef]);
 
@@ -130,12 +157,12 @@ const WebRTC: React.FC = () => {
   }, [localVideoRef, onLoadLocalVideoMedaDataHandler]);
   
   React.useEffect(() => {
-    localPeerConnection.addEventListener('icecandidate', handleConnection);
-    remotePeerConnection.addEventListener('icecandidate', handleConnection);
+    localPeerConnection?.addEventListener?.('icecandidate', handleConnection);
+    remotePeerConnection?.addEventListener?.('icecandidate', handleConnection);
 
     return () => {
-      localPeerConnection.removeEventListener('icecandidate', handleConnection);
-      remotePeerConnection.removeEventListener('icecandidate', handleConnection);
+      localPeerConnection?.removeEventListener?.('icecandidate', handleConnection);
+      remotePeerConnection?.removeEventListener?.('icecandidate', handleConnection);
     }
   }, [localPeerConnection, remotePeerConnection, handleConnection]);
 
@@ -145,14 +172,16 @@ const WebRTC: React.FC = () => {
         const mediaStream = remoteVideoRef.current.srcObject 
           ? new MediaStream(remoteVideoRef.current.srcObject as MediaStream)
           : new MediaStream();
+
+        console.log(mediaStream);
           
         mediaStream.addTrack(event.track);
         remoteVideoRef.current.srcObject = mediaStream;
       }
     }
-
-    remotePeerConnection.addEventListener('track', addTrackHandler);
-    return () => remotePeerConnection.removeEventListener('track', addTrackHandler);
+    
+    remotePeerConnection?.addEventListener('track', addTrackHandler);
+    return () => remotePeerConnection?.removeEventListener('track', addTrackHandler);
   }, [remotePeerConnection, remoteVideoRef]);
   
   return (
@@ -169,9 +198,9 @@ const WebRTC: React.FC = () => {
           <H2>Local Video</H2>
           <div>
             <video ref={localVideoRef} autoPlay/> <br/>
-            <Button onClick={requestGetUserMedia}>촬영</Button>
-            <Button onClick={toggleAudio}>오디오 {isAudio ? 'off' : 'on'}</Button>
-            <Button onClick={toggleVideo}>비디오 {isVideo ? 'off' : 'on'}</Button>
+            <Button onClick={togglePlay}>{isPlay ? '중지' : '촬영'}</Button>
+            <Button onClick={toggleAudio} disabled={!isVideo || isPlay}>오디오 {isAudio ? 'off' : 'on'}</Button>
+            <Button onClick={toggleVideo} disabled={!isAudio || isPlay}>비디오 {isVideo ? 'off' : 'on'}</Button>
           </div>
         </Article>
         <Article>
