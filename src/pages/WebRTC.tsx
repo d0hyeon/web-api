@@ -172,8 +172,6 @@ const WebRTC: React.FC = () => {
         const mediaStream = remoteVideoRef.current.srcObject 
           ? new MediaStream(remoteVideoRef.current.srcObject as MediaStream)
           : new MediaStream();
-
-        console.log(mediaStream);
           
         mediaStream.addTrack(event.track);
         remoteVideoRef.current.srcObject = mediaStream;
