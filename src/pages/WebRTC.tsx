@@ -138,7 +138,7 @@ const WebRTC: React.FC = () => {
   }, [isAudio, toggleTracks, userMediaStreamRef]);
   React.useEffect(() => {
     if(userMediaStreamRef.current) {
-      const mediaStream = toggleTracks('audio');
+      const mediaStream = toggleTracks('video');
       userMediaStreamRef.current = mediaStream;
     }
   }, [isVideo, toggleTracks, userMediaStreamRef]);
