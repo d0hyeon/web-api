@@ -1,16 +1,13 @@
 import React from 'react';
-import styled from '@emotion/styled';
+import { Header } from '@src/components/styles/common';
+import { H1 } from '@src/components/styles/text';
 
 const Home: React.FC = () => {
   return (
-    <Wrapper>
-      welcome
-    </Wrapper>
+    <Header>
+      <H1>Welcome!</H1>
+    </Header>
   )
 }
-
-const Wrapper = styled.section`
-  
-`
 
 export default Home;
