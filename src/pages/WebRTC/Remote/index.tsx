@@ -27,8 +27,9 @@ const WebRTCRemote = () => {
   }, [setInputValue]);
 
   const buttonClickHandler = React.useCallback(() => {
-    socket.emit('joinRoom', inputValue);
-  }, [inputValue]);
+    socket.emit('createRoom', inputValue);
+    history.push(`${pathname}/${inputValue}`);
+  }, [inputValue, pathname, history]);
 
   const getRoomListFromSocket = React.useCallback((rooms: RoomCountFromSocket): Room[] => {
     return Object.entries(rooms).map(([key, value]) => ({
@@ -36,12 +37,6 @@ const WebRTCRemote = () => {
       count: value
     }))
   }, []);
-
-  React.useEffect(() => {
-    socket.on('joinedRoom', (roomName: string) => {
-      history.push(roomName);
-    })
-  }, [history]);
 
   React.useEffect(() => {
     setLoading(true);
@@ -55,13 +50,14 @@ const WebRTCRemote = () => {
     socket.on('createdRoom', (roomName: string) => {
       setRoomList(prev => ([
         ...prev,
-        {title: roomName, count: 1}
+        {title: roomName, count: 0}
       ]))
     });
 
     socket.on('updatedRoom', (rooms: RoomCountFromSocket) => {
-      alert('update!');
+      console.log(rooms);
       const roomList = getRoomListFromSocket(rooms);
+      
       setRoomList(prev => {
         return prev.map((room) => {
           const updateRoom = roomList.find(({title}) => title === room.title);
@@ -69,11 +65,12 @@ const WebRTCRemote = () => {
             return updateRoom;
           }
           return room;
-        })
+        });
       })
     });
 
     socket.on('deletedRoom', (roomName: string) => {
+      console.log(roomName);
       setRoomList(prev => prev.filter(({title}) => title !== roomName));
     })
   }, [setRoomList, setLoading]);
@@ -92,7 +89,7 @@ const WebRTCRemote = () => {
               <Ul>
                 {roomList.map(({title, count}) => (
                   <li key={title}>
-                    {count === 1 ? (
+                    {count < 2 ? (
                       <Link to={`${pathname}/${title}`}>{title} ({count}/2)</Link>
                     ) : (
                       <DisabledP>{title} ({count}/2)</DisabledP>
