@@ -1,8 +1,9 @@
 import React from 'react';
-import {BrowserRouter, Switch, Route, useParams} from 'react-router-dom'
+import {BrowserRouter, Switch, Route} from 'react-router-dom'
 import {Global, css} from '@emotion/react';
 import styled from '@emotion/styled';
 import Navigate, { CATEGORIES } from '@src/components/layout/Navigate';
+
 
 const Home = React.lazy(() => import('@src/pages/Home'));
 type ComponentMap = {[key: string]: React.ComponentType};
@@ -25,7 +26,7 @@ const App: React.FC = () => {
             <main className="content">
               <Route exact path="/" component={Home}/>
               {CATEGORIES.map(({url, path}) => (
-                <Route exact path={url} component={componentMap[path]} />
+                <Route key={url} exact path={url} component={componentMap[path]} />
               ))}
             </main>
           </React.Suspense>
