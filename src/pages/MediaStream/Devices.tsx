@@ -36,7 +36,7 @@ const MediaDevices: React.FC = () => {
           videoRef.current.srcObject = mediaStream;
         }
       })
-  }, [videoRef]);
+  }, [videoRef, constraints]);
 
   const runDisplayMedia = React.useCallback(() => {
     // @ts-ignore
