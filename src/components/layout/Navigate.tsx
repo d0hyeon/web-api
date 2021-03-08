@@ -18,7 +18,9 @@ export const CATEGORIES: Menu[] = [
   {title: 'MediaStream', url: '/media', path: '/MediaStream'},
   {title: 'MediaStreamTrack', url: '/media/track', path: '/MediaStream/Track'},
   {title: 'MediaDevices', url: '/media/devices', path: '/MediaStream/Devices'},
-  {title: 'WebRTC', url: '/webrtc', path: '/WebRTC'},
+  {title: 'WebRTC(local)', url: '/webrtc/local', path: '/WebRTC/Local'},
+  {title: 'WebRTC(remote)', url: '/webrtc/remote', path: '/WebRTC/Remote/'},
+  {url: '/webrtc/remote/:room', path: '/WebRTC/Remote/Detail'},
   {title: 'WebGL', url: '/webgl', path: '/WebGL'}
 ]
 
