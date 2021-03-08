@@ -4,43 +4,43 @@ const socketIO = require('socket.io');
 module.exports = (app) => {
   const server = http.Server(app);
   const io = socketIO(server);
-  let rooms = {};
+  let countInRooms = {};
   io.on('connection', (socket) => {
     const isCreatedRoom = roomName => {
-      return typeof rooms[roomName] === 'number';
+      return typeof countInRooms[roomName] === 'number';
     }
 
     socket.on('getRoomList', () => {
-      io.sockets.emit('roomList', rooms);
+      io.sockets.emit('roomList', countInRooms);
+    });
+
+    socket.on('createRoom', (roomName) => {
+      countInRooms[roomName] = 0;
+      io.sockets.emit('createdRoom', roomName);
     });
 
     socket.on('joinRoom', (roomName) => {
-      socket.join(roomName);
       if(isCreatedRoom(roomName)) {
-        if(rooms[roomName] === 1) {
-          rooms[roomName] = 2;
-          console.log('222');
-          io.sockets.emit('updatedRoom', rooms[roomName]);
+        if(countInRooms[roomName] < 2) {
+          socket.join(roomName);
+          countInRooms[roomName] += 1;
+          io.sockets.emit('updatedRoom', {[roomName]: countInRooms[roomName]});
           socket.emit('joinedRoom', roomName);
           io.sockets.in(roomName).emit('joined', 'join!!');
         } else {
           socket.emit('full', roomName);
         }
-      } else {
-        rooms[roomName] = 1;
-        io.sockets.emit('createdRoom', roomName);
-        socket.emit('joinedRoom', roomName);
       }
     });
 
     socket.on('leaveRoom', roomName => {
       if(isCreatedRoom(roomName)) {
         socket.leave(roomName);
-        if(rooms[roomName]) {
-          rooms[roomName] -= 1;
-          io.sockets.emit('updatedRoom', rooms[roomName]);
+        if(countInRooms[roomName] > 1) {
+          countInRooms[roomName] -= 1;
+          io.sockets.emit('updatedRoom', {[roomName]: countInRooms[roomName]});
         } else {
-          delete rooms[roomName];
+          delete countInRooms[roomName];
           io.sockets.emit('deletedRoom', roomName);
         }
       }
