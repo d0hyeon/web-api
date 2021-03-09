@@ -55,7 +55,6 @@ const WebRTCRemote = () => {
     });
 
     socket.on('updatedRoom', (rooms: RoomCountFromSocket) => {
-      console.log(rooms);
       const roomList = getRoomListFromSocket(rooms);
       
       setRoomList(prev => {
