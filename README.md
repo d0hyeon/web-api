@@ -22,4 +22,10 @@ npm run start
 - Resize Observer
 - Performance
 - Performance Observer
+- MediaStream
+- MediaStreamTrack
+- MediaDevices
+- WebRTC (Local)
+- WebRTC (Remote)
+- WebGL
 
