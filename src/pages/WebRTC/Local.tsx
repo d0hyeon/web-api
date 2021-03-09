@@ -212,7 +212,7 @@ const WebRTCLocal: React.FC = () => {
   )
 };
 
-const FlexSection = styled(Section)`
+export const FlexSection = styled(Section)`
   display: flex;
   align-items: center;
   justify-content: space-between;
