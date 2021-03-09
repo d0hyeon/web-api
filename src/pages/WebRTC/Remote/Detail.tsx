@@ -66,7 +66,7 @@ const WebRTCRoomDetail = () => {
     }
   }, [peerConnection]);
 
-  const addCandidateFromRemote = React.useCallback((candidate) => {
+  const acceptMessageOfIceCandidate = React.useCallback((candidate) => {
     if(peerConnection) {
       const remoteCandidate = new RTCIceCandidate(candidate);
       peerConnection.addIceCandidate(remoteCandidate);
@@ -117,7 +117,6 @@ const WebRTCRoomDetail = () => {
 
   const acceptAnswer = React.useCallback(description => {
     if(peerConnection) {
-      console.log('answer description', description)
       peerConnection.setRemoteDescription(description).catch(console.error)
     }
   }, [peerConnection]);
@@ -135,7 +134,7 @@ const WebRTCRoomDetail = () => {
           break;
         }
         case 'candidate': {
-          addCandidateFromRemote({
+          acceptMessageOfIceCandidate({
             sdpMLineIndex: message.label,
             candidate: message.candidate
           });
@@ -147,7 +146,7 @@ const WebRTCRoomDetail = () => {
     return () => {
       socket.off('message', onMessageHandler);
     }
-  }, [acceptOffer, acceptAnswer, addCandidateFromRemote]);
+  }, [acceptOffer, acceptAnswer, acceptMessageOfIceCandidate]);
 
   React.useEffect(() => {
     if(isAccessOther) {
@@ -157,7 +156,7 @@ const WebRTCRoomDetail = () => {
           alert('권한을 허용해주세요.');
         })
     } 
-  }, [createOffer, localMediaStreamRef.current, isAccessOther]);
+  }, [createOffer, localMediaStreamRef, isAccessOther]);
 
   React.useEffect(() => {
     const readyClientHandler = () => {
