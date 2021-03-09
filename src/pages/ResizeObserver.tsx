@@ -6,7 +6,14 @@ import Toggle from '@src/components/Toggle';
 import Async from '@src/components/AsyncToggle';
 
 const MY_TEXT = '낮엔 파란하늘\n 별이 보이는밤 \n 기분좋은날 모두 모일까 내가사랑하는 삶을 사랑하지 나는\n 우야야야야\n'
-const IMAGES = (process.env.REACT_APP_DUMP_IMAGES ?? '').split(',');
+const IMAGES = [
+  'https://i1.ruliweb.com/img/19/05/08/16a977c7bb24f54e2.jpeg',
+  'https://i3.ruliweb.com/img/19/05/08/16a977c7d7e4f54e2.jpeg',
+  'https://i2.ruliweb.com/img/19/05/08/16a977c7edf4f54e2.jpeg',
+  'https://i1.ruliweb.com/img/19/05/08/16a977c80124f54e2.jpeg',
+  'https://i1.ruliweb.com/img/19/05/08/16a977c81674f54e2.jpeg',
+  ...(process.env.REACT_APP_DUMP_IMAGES ?? '').split(',')
+];
 
 const ResizeObserverPage: React.FC = () => {
   const [text, setText] = React.useState<string>('');
