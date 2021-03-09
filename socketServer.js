@@ -36,6 +36,10 @@ module.exports = (app) => {
         }
       }
     });
+    
+    socket.on('ready', () => {
+      socket.broadcast.emit('readyClient');
+    })
 
     socket.on('leaveRoom', roomName => {
       if(isCreatedRoom(roomName)) {
