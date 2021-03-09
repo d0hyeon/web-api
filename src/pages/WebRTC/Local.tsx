@@ -181,6 +181,12 @@ const WebRTCLocal: React.FC = () => {
     remotePeerConnection?.addEventListener('track', addTrackHandler);
     return () => remotePeerConnection?.removeEventListener('track', addTrackHandler);
   }, [remotePeerConnection, remoteVideoRef]);
+
+  React.useEffect(() => {
+    return () => {
+      closeUserMedia();
+    }
+  }, [closeUserMedia])
   
   return (
     <>
