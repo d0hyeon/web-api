@@ -149,6 +149,52 @@ const WebRTCRoomDetail = () => {
   }, [acceptOffer, acceptAnswer, acceptMessageOfIceCandidate]);
 
   React.useEffect(() => {
+    const readyClientHandler = () => {
+      setPeerConnection(peerConnection => {
+        // 상대방이 떠나고 재 접속을 한다면 PeerConnection을 재 설정 해줌
+        if(!peerConnection) {
+          const newPeerConnection = new RTCPeerConnection();
+          localMediaStreamRef.current!.getTracks().forEach(track => {
+            newPeerConnection.addTrack(track);
+          });
+
+          return newPeerConnection;
+        }
+        // 상대방이 처음으로 들어오면 기존의 PeerConnection을 반환 
+        return peerConnection;
+      });
+      setTimeout(() => setIsAccessOther(true));
+    }
+    const leaveClientHandler = () => {
+      setIsAccessOther(false);
+      setPeerConnection(peerConnection => {
+        // PeerConnection 종료하고 null로 반환 
+        if(peerConnection) {
+          peerConnection?.close();
+        }
+        return null;
+      });
+      if(remoteVideoRef.current) {
+        // 상대방이 떠난것 이므로 상대방의 MediaStreamTrack들을 종료해줌
+        (remoteVideoRef.current.srcObject as MediaStream)
+          ?.getTracks()
+          ?.forEach(track => track.stop());   
+          remoteVideoRef.current.srcObject = null;
+      }
+    }
+    socket.emit('joinRoom', room);
+    socket.on('readyClient', readyClientHandler); // 상대방이 접속 후 준비가 완료 됬을 때
+    socket.on('leavedClient', leaveClientHandler); // 상대방이 떠났을 때
+
+    return () => {
+      socket.emit('leaveRoom', room);
+      socket.off('readyClient', readyClientHandler);
+      socket.off('leavedClient', leaveClientHandler);
+    }
+  }, [room, localMediaStreamRef, remoteVideoRef, setPeerConnection, setIsAccessOther]);
+
+  React.useEffect(() => {
+    // 다른 사용자의 준비가 완료 되고 MediaStream 데이터가 준비 됬을 때 연결을 시도함
     if(isAccessOther) {
       isExistWithInTimeout(localMediaStreamRef.current)
         .then(createOffer)
@@ -159,48 +205,8 @@ const WebRTCRoomDetail = () => {
   }, [createOffer, localMediaStreamRef, isAccessOther]);
 
   React.useEffect(() => {
-    const readyClientHandler = () => {
-      setPeerConnection(peerConnection => {
-        if(!peerConnection) {
-          const newPeerConnection = new RTCPeerConnection();
-          localMediaStreamRef.current!.getTracks().forEach(track => {
-            newPeerConnection.addTrack(track);
-          });
-
-          return newPeerConnection;
-        }
-        return peerConnection;
-      });
-      setTimeout(() => setIsAccessOther(true));
-    }
-    const leaveClientHandler = () => {
-      setIsAccessOther(false);
-      setPeerConnection(peerConnection => {
-        if(peerConnection) {
-          peerConnection?.close();
-        }
-        return null;
-      });
-      if(remoteVideoRef.current) {
-        (remoteVideoRef.current.srcObject as MediaStream)
-          ?.getTracks()
-          ?.forEach(track => track.stop());   
-          remoteVideoRef.current.srcObject = null;
-      }
-    }
-    socket.emit('joinRoom', room);
-    socket.on('readyClient', readyClientHandler);
-    socket.on('leavedClient', leaveClientHandler);
-
     return () => {
-      socket.emit('leaveRoom', room);
-      socket.off('readyClient', readyClientHandler);
-      socket.off('leavedClient', leaveClientHandler);
-    }
-  }, [room, localMediaStreamRef, remoteVideoRef, setPeerConnection, setIsAccessOther]);
-
-  React.useEffect(() => {
-    return () => {
+      // 방에서 나갔을 때 녹화, 녹취중인 MediaStreamTrack 들을 종료 시킴
       if(localMediaStreamRef.current) {
         const tracks = localMediaStreamRef.current.getTracks();
         tracks.forEach(track => track.stop());
