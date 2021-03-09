@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 import { Article, Header } from '@src/components/styles/common';
 import { H1 } from '@src/components/styles/text';
 import { FlexSection } from '../Local';
+import { isExistWithInTimeout } from '@src/utils';
 
 const socket = io();
 
@@ -33,6 +34,19 @@ const WebRTCRoomDetail = () => {
   const [peerConnection, setPeerConnection] = React.useState<null | RTCPeerConnection>(new RTCPeerConnection());
   const [isAccessOther, setIsAccessOther] = React.useState<boolean>(false);
 
+  React.useEffect(() => {
+    navigator.mediaDevices.getUserMedia({video: true, audio: true})
+      .then((mediaStream) => {
+        localMediaStreamRef.current = mediaStream;
+        const videoMediaStream = new MediaStream();
+        mediaStream.getVideoTracks().forEach((track) => {
+          videoMediaStream.addTrack(track);
+        })
+        localVideoRef.current!.srcObject = mediaStream;
+        socket.emit('ready');
+      })
+  }, [room, localVideoRef, localMediaStreamRef]);
+
   const onMetaDataLocalVideoHandler = React.useCallback(() => {
     if(peerConnection) {
       localMediaStreamRef.current!.getTracks().forEach(track => {
@@ -41,7 +55,7 @@ const WebRTCRoomDetail = () => {
     }
   }, [peerConnection, localMediaStreamRef]);
 
-  const onIceCandiddateHandler = React.useCallback((event: RTCPeerConnectionIceEvent) => {
+  const sendMessageIceToCandidate = React.useCallback((event: RTCPeerConnectionIceEvent) => {
     if(event.candidate) {
       socket.emit('message', {
         type: 'candidate',
@@ -49,6 +63,13 @@ const WebRTCRoomDetail = () => {
         id: event.candidate.sdpMid,
         candidate: event.candidate.candidate
       })
+    }
+  }, [peerConnection]);
+
+  const addCandidateFromRemote = React.useCallback((candidate) => {
+    if(peerConnection) {
+      const remoteCandidate = new RTCIceCandidate(candidate);
+      peerConnection.addIceCandidate(remoteCandidate);
     }
   }, [peerConnection]);
 
@@ -60,22 +81,13 @@ const WebRTCRoomDetail = () => {
     }
   }, [remoteVideoRef]);
 
-  const addCandidateFromRemote = React.useCallback((candidate) => {
-    if(peerConnection) {
-      const remoteCandidate = new RTCIceCandidate(candidate);
-      peerConnection.addIceCandidate(remoteCandidate)
-    }
-  }, [peerConnection]);
-
-
   const createOffer = React.useCallback(() => {
     if(peerConnection) {
       peerConnection.createOffer({offerToReceiveVideo: true})
         .then((description) => {
           peerConnection.setLocalDescription(description)
             .then(() => socket.emit('message', description))
-            .catch(console.error)
-          ;
+            .catch(console.error);
         }).catch(console.error)
     }
   }, [peerConnection]);
@@ -89,31 +101,27 @@ const WebRTCRoomDetail = () => {
             .catch(console.error)
         })
     }
-  }, [peerConnection]);
+  }, [peerConnection, localMediaStreamRef]);
 
   const acceptOffer = React.useCallback((description) => {
     if(peerConnection) {
-      peerConnection.setRemoteDescription(description).then(createAnswer).catch(console.error)
+      isExistWithInTimeout(localMediaStreamRef.current)
+        .then(() => {
+          peerConnection.setRemoteDescription(description).then(createAnswer).catch(console.error)
+        })
+        .catch(() => {
+          alert('권한을 허용해주세요.');
+        })
     }
-  }, [peerConnection, createAnswer]);
+  }, [localMediaStreamRef, peerConnection, createAnswer, localMediaStreamRef]);
 
   const acceptAnswer = React.useCallback(description => {
     if(peerConnection) {
+      console.log('answer description', description)
       peerConnection.setRemoteDescription(description).catch(console.error)
     }
   }, [peerConnection]);
 
-  React.useEffect(() => {
-    navigator.mediaDevices.getUserMedia({video: true, audio: true})
-      .then((mediaStream) => {
-        localMediaStreamRef.current = mediaStream;
-        const videoMediaStream = new MediaStream();
-        mediaStream.getVideoTracks().forEach((track) => {
-          videoMediaStream.addTrack(track);
-        })
-        localVideoRef.current!.srcObject = mediaStream;
-      })
-  }, [localVideoRef, localMediaStreamRef]);
 
   React.useEffect(() => {
     const onMessageHandler = (message: CandidateMessage | OfferMessage | AnswerMessage) => {
@@ -143,12 +151,16 @@ const WebRTCRoomDetail = () => {
 
   React.useEffect(() => {
     if(isAccessOther) {
-      createOffer();
+      isExistWithInTimeout(localMediaStreamRef.current)
+        .then(createOffer)
+        .catch(() => {
+          alert('권한을 허용해주세요.');
+        })
     } 
-  }, [createOffer, isAccessOther]);
+  }, [createOffer, localMediaStreamRef.current, isAccessOther]);
 
   React.useEffect(() => {
-    const joinClientHandler = () => {
+    const readyClientHandler = () => {
       setPeerConnection(peerConnection => {
         if(!peerConnection) {
           const newPeerConnection = new RTCPeerConnection();
@@ -158,7 +170,7 @@ const WebRTCRoomDetail = () => {
 
           return newPeerConnection;
         }
-        return peerConnection ?? new RTCPeerConnection()
+        return peerConnection;
       });
       setTimeout(() => setIsAccessOther(true));
     }
@@ -169,18 +181,24 @@ const WebRTCRoomDetail = () => {
           peerConnection?.close();
         }
         return null;
-      })
+      });
+      if(remoteVideoRef.current) {
+        (remoteVideoRef.current.srcObject as MediaStream)
+          ?.getTracks()
+          ?.forEach(track => track.stop());   
+          remoteVideoRef.current.srcObject = null;
+      }
     }
     socket.emit('joinRoom', room);
-    socket.on('joinedClient', joinClientHandler);
+    socket.on('readyClient', readyClientHandler);
     socket.on('leavedClient', leaveClientHandler);
 
     return () => {
       socket.emit('leaveRoom', room);
-      socket.off('joinedClient', joinClientHandler);
+      socket.off('readyClient', readyClientHandler);
       socket.off('leavedClient', leaveClientHandler);
     }
-  }, [room, localMediaStreamRef, setPeerConnection, setIsAccessOther]);
+  }, [room, localMediaStreamRef, remoteVideoRef, setPeerConnection, setIsAccessOther]);
 
   React.useEffect(() => {
     return () => {
@@ -188,22 +206,17 @@ const WebRTCRoomDetail = () => {
         const tracks = localMediaStreamRef.current.getTracks();
         tracks.forEach(track => track.stop());
       }
-      if(remoteVideoRef.current) {
-        (remoteVideoRef.current?.srcObject as MediaStream)
-          ?.getTracks()
-          ?.forEach(track => track.stop());
-      }
     }
   }, [room, localMediaStreamRef, remoteVideoRef]);
 
   React.useEffect(() => {
     if(peerConnection) {
-      peerConnection.addEventListener('icecandidate', onIceCandiddateHandler);
+      peerConnection.addEventListener('icecandidate', sendMessageIceToCandidate);
       return () => {
-        peerConnection.removeEventListener('icecandidate', onIceCandiddateHandler)
+        peerConnection.removeEventListener('icecandidate', sendMessageIceToCandidate)
       }
     }
-  }, [peerConnection, onIceCandiddateHandler]);
+  }, [peerConnection, sendMessageIceToCandidate]);
 
   React.useLayoutEffect(() => {
     if(localVideoRef.current) {
@@ -216,10 +229,6 @@ const WebRTCRoomDetail = () => {
 
   React.useEffect(() => {
     peerConnection?.addEventListener('track', addTrackHandler);
-    
-    return () => {
-      peerConnection?.removeEventListener('track', addTrackHandler);
-    }
   }, [peerConnection, addTrackHandler]);
 
   return (
