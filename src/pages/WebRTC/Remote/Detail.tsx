@@ -55,7 +55,7 @@ const WebRTCRoomDetail = () => {
     }
   }, [peerConnection, localMediaStreamRef]);
 
-  const sendMessageIceToCandidate = React.useCallback((event: RTCPeerConnectionIceEvent) => {
+  const sendMessageToIceCandidate = React.useCallback((event: RTCPeerConnectionIceEvent) => {
     if(event.candidate) {
       socket.emit('message', {
         type: 'candidate',
@@ -211,12 +211,12 @@ const WebRTCRoomDetail = () => {
 
   React.useEffect(() => {
     if(peerConnection) {
-      peerConnection.addEventListener('icecandidate', sendMessageIceToCandidate);
+      peerConnection.addEventListener('icecandidate', sendMessageToIceCandidate);
       return () => {
-        peerConnection.removeEventListener('icecandidate', sendMessageIceToCandidate)
+        peerConnection.removeEventListener('icecandidate', sendMessageToIceCandidate)
       }
     }
-  }, [peerConnection, sendMessageIceToCandidate]);
+  }, [peerConnection, sendMessageToIceCandidate]);
 
   React.useLayoutEffect(() => {
     if(localVideoRef.current) {
