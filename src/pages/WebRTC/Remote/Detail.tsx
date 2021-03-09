@@ -64,7 +64,7 @@ const WebRTCRoomDetail = () => {
         candidate: event.candidate.candidate
       })
     }
-  }, [peerConnection]);
+  }, []);
 
   const acceptMessageOfIceCandidate = React.useCallback((candidate) => {
     if(peerConnection) {
@@ -101,7 +101,7 @@ const WebRTCRoomDetail = () => {
             .catch(console.error)
         })
     }
-  }, [peerConnection, localMediaStreamRef]);
+  }, [peerConnection]);
 
   const acceptOffer = React.useCallback((description) => {
     if(peerConnection) {
@@ -113,7 +113,7 @@ const WebRTCRoomDetail = () => {
           alert('권한을 허용해주세요.');
         })
     }
-  }, [localMediaStreamRef, peerConnection, createAnswer, localMediaStreamRef]);
+  }, [localMediaStreamRef, peerConnection, createAnswer]);
 
   const acceptAnswer = React.useCallback(description => {
     if(peerConnection) {
@@ -224,10 +224,11 @@ const WebRTCRoomDetail = () => {
   }, [peerConnection, sendMessageToIceCandidate]);
 
   React.useLayoutEffect(() => {
-    if(localVideoRef.current) {
-      localVideoRef.current!.addEventListener('loadedmetadata', onMetaDataLocalVideoHandler);
+    const {current: localVideo} = localVideoRef;
+    if(localVideo) {
+      localVideo.addEventListener('loadedmetadata', onMetaDataLocalVideoHandler);
       return () => {
-        localVideoRef.current!.removeEventListener('loadedmetadata', onMetaDataLocalVideoHandler);
+        localVideo.removeEventListener('loadedmetadata', onMetaDataLocalVideoHandler);
       }
     }
   }, [localVideoRef, onMetaDataLocalVideoHandler]);
