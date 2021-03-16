@@ -82,7 +82,7 @@ const ResizeObserverPage: React.FC = () => {
           </Toggle>
         </ExampleSection>
         <ExampleSection>
-          <Async title={<P>예제(비동기)</P>}>
+          <Async title={<P>예제(비동기)</P>} loading={<P>Loading...</P>}>
             {getContents}
           </Async>
         </ExampleSection>
