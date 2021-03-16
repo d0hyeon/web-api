@@ -6,14 +6,13 @@ import Toggle from '@src/components/Toggle';
 import Async from '@src/components/AsyncToggle';
 
 const MY_TEXT = '낮엔 파란하늘\n 별이 보이는밤 \n 기분좋은날 모두 모일까 내가사랑하는 삶을 사랑하지 나는\n 우야야야야\n'
-const IMAGES = [
-  'https://i1.ruliweb.com/img/19/05/08/16a977c7bb24f54e2.jpeg',
-  'https://i3.ruliweb.com/img/19/05/08/16a977c7d7e4f54e2.jpeg',
-  'https://i2.ruliweb.com/img/19/05/08/16a977c7edf4f54e2.jpeg',
-  'https://i1.ruliweb.com/img/19/05/08/16a977c80124f54e2.jpeg',
-  'https://i1.ruliweb.com/img/19/05/08/16a977c81674f54e2.jpeg',
-  ...(process.env.REACT_APP_DUMP_IMAGES ?? '').split(',')
+let IMAGES = [
+  ...(process.env.REACT_APP_DUMP_IMAGES ?? '').split(','),
 ];
+
+for(let i = 0; i < 20; i ++) {
+  IMAGES.push(`https://picsum.photos/600/600/?random${Math.random() * i}`);
+}
 
 const ResizeObserverPage: React.FC = () => {
   const [text, setText] = React.useState<string>('');
@@ -23,13 +22,13 @@ const ResizeObserverPage: React.FC = () => {
 
   const getContents = React.useCallback((open) => {
     const content = (
-      <>
-        {IMAGES.map((url, idx) => (
-          <p key={`${url}-${idx}`}>
-            <img src={url} width="100" alt="person"/>
-          </p>
+      <GridLayout>
+        {IMAGES.map((url) => (
+          <div key={`async-${url}`}>
+            <img src={url} alt="image"/>
+          </div>
         ))}
-    </>
+    </GridLayout>
     )
     if(open) {
       return new Promise(resolve => {
@@ -73,13 +72,13 @@ const ResizeObserverPage: React.FC = () => {
         </ExampleSection>
         <ExampleSection>
           <Toggle title={<P>예제(이미지)</P>} duration={700}>
-            <>
+            <GridLayout>
               {IMAGES.map(url => (
-                <p key={url}>
+                <div key={url}>
                   <img src={url} alt="banner" />
-                </p>
+                </div>
               ))}
-            </>
+            </GridLayout>
           </Toggle>
         </ExampleSection>
         <ExampleSection>
@@ -92,7 +91,16 @@ const ResizeObserverPage: React.FC = () => {
   )
 };
 
-const ExampleSection = styled.div`
+const GridLayout = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 10px;
+  row-gap: 15px;
+  align-items: center;
+`;
+
+const ExampleSection = styled.div`  
+  width: 100%;
   .toggle__content {
     border: 1px solid #ddd;
 
