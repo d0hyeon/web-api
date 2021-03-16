@@ -45,7 +45,7 @@ const Layout = styled.div`
     flex: 0 0 auto;
   }
   .content {
-    flex: 1 0 auto;
+    flex: 1 1 auto;
     overflow-y: auto;
     padding: 20px;
   }
