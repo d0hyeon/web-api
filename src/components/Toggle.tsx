@@ -1,29 +1,38 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import ResizeObservable from '@src/lib/ResizeObservable';
-import { onLoadChildren } from '@src/utils/element';
+import { isExistWithInTimeout } from '@src/utils';
 
 export interface ToggleProps {
   title: React.ReactNode;
   children: React.ReactNode;
   duration?: number;
+  loading?: React.ReactNode;
+  timeout?: number;
 }
 
 const ob = new ResizeObservable();
 
-const Toggle: React.FC<ToggleProps> = ({title, children, duration = 300}) => {
+const Toggle: React.FC<ToggleProps> = ({
+  title, 
+  children, 
+  loading,
+  duration = 300, 
+  timeout = 3000
+}) => {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const lastHeightRef = React.useRef<number>(0);
   const [heightValue, setHeightValue] = React.useState<string>('0px');
   const [isInit, setIsInit] = React.useState<boolean>(false); // 실 컨텐츠 높이가 구해졌는가?
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [isAnimating, setIsAnimating] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const resizeHandler = React.useCallback(({height}: DOMRect) => {
-    if(isOpen && height) {
+    if(isOpen && height && !isAnimating) {
       lastHeightRef.current = height;
     }
-  }, [isOpen, lastHeightRef]);
+  }, [isAnimating, isOpen, lastHeightRef]);
 
   React.useLayoutEffect(() => {
     ob.register(contentRef.current as HTMLDivElement, resizeHandler);
@@ -32,64 +41,90 @@ const Toggle: React.FC<ToggleProps> = ({title, children, duration = 300}) => {
 
   React.useLayoutEffect(() => {
     const transitionStartHandler = () => setIsAnimating(true);
-    const transitionCancleHandler = () => setIsAnimating(false);
-    // 내용이 열리고 동적으로 컨텐츠가 추가 됬을 때 사이즈 감지를 위해 스타일 속성 중 height 를 auto로 변환시킴.
-    const transitionEndHandler = () => {
-      setIsAnimating(false);
-      setHeightValue(curr => {
-        return curr === '0px' 
-          ? curr // 닫는 시점에서는 auto가 될 필요 없음
-          : 'auto'
-      });
-    };
+    const transitionEndHandler = () => setIsAnimating(false);
+    
     contentRef.current?.addEventListener('transitionstart', transitionStartHandler);
     contentRef.current?.addEventListener('transitionend', transitionEndHandler);
-    contentRef.current?.addEventListener('transitioncancel', transitionCancleHandler);
+    contentRef.current?.addEventListener('transitioncancel', transitionEndHandler);
 
     return () => {
       contentRef.current?.removeEventListener('transitionstart', transitionStartHandler);
       contentRef.current?.removeEventListener('transitionend', transitionEndHandler);
-      contentRef.current?.removeEventListener('transitioncancel', transitionCancleHandler);
+      contentRef.current?.removeEventListener('transitioncancel', transitionEndHandler);
     }
   }, [contentRef, setHeightValue, setIsAnimating]);
 
-  const toggleHandler = React.useCallback<React.MouseEventHandler<Element>>(() => {
-    if(isAnimating) {
-      return;
-    }
-    // 열고 닫을 때만 스타일에 높이값을 직접 부여하여 transition 효과를 줌
-    if(isOpen) {
-      // 닫을때
-      setHeightValue(lastHeightRef.current + 'px');
+  const onLoadContentHandler = React.useCallback<() => Promise<number>>(() => {
+    return new Promise(async (resolve, reject) => {
+      const contentHeightRef = await isExistWithInTimeout<{current: number}>(lastHeightRef, timeout, 200);
+      if(contentHeightRef) {
+        resolve(lastHeightRef.current);
+      } else {
+        reject(null);
+      }
+    })
+  }, [lastHeightRef, contentRef, timeout]);
+
+  const toggleClose = React.useCallback(() => {
+    setHeightValue(lastHeightRef.current + 'px');
       setTimeout(() => {
         setHeightValue('0px');
         setTimeout(() => {
           setIsOpen(false); 
         }, duration);
       });
-    } else {
-      // 열때
-      setIsOpen(true);
+  }, [setHeightValue, setHeightValue, setIsOpen]);
+
+  const toggleOpen = React.useCallback(() => {
+    setIsLoading(true);
+    setIsOpen(true);
+    setIsInit(false);
+    onLoadContentHandler()
+      .then((height) => {
+        setIsLoading(false);
+        setTimeout(() => {
+          setIsInit(true);
+          setHeightValue('0px');
+          requestAnimationFrame(() => {
+            setHeightValue(`${height}px`);
+            setTimeout(() => setHeightValue('auto'), duration);
+          })
+        });
+      })
+      
+  }, [setIsOpen, setIsInit, setIsLoading, setHeightValue, onLoadContentHandler, duration]);
+
+  const toggleHandler = React.useCallback<React.MouseEventHandler<Element>>(() => {
+    if(isAnimating) {
+      return;
     }
-  }, [isOpen, isAnimating, setIsOpen, lastHeightRef, duration]);
-  
-  React.useEffect(() => {
     if(isOpen) {
-      onLoadChildren((contentRef.current) as Element, 'img')
-        .then(() => {
-          setIsInit(false);
-          setTimeout(() => {
-            setIsInit(true);
-            setHeightValue('0px');
-            setTimeout(() => setHeightValue(lastHeightRef.current + 'px'), 20);
-          }, 30)
-        })
+      toggleClose();
+    } else {
+      toggleOpen();
     }
-  }, [isOpen, setHeightValue, setIsInit, lastHeightRef, contentRef])
+  }, [isOpen, isAnimating, toggleClose, toggleOpen]);
+  
+  // React.useEffect(() => {
+  //   if(isOpen) {
+  //     if(lastHeightRef.current) {
+  //       onLoadContent((contentRef.current) as Element, 'img')
+  //         .then(() => {
+  //           setIsInit(false);
+  //           setTimeout(() => {
+  //             setIsInit(true);
+  //             setHeightValue('0px');
+  //             setTimeout(() => setHeightValue(lastHeightRef.current + 'px'), 20);
+  //           }, 0)
+  //         })
+  //     };
+  //   }
+  // }, [isOpen, timeout, setIsLoading, setIsError, setHeightValue, setIsInit, lastHeightRef, contentRef])
 
   return (
     <Wrapper className="toggle-article">
       <Title isOpen={heightValue !== '0px' && isOpen} onClick={toggleHandler} duration={duration} className="toggle__title">{title}</Title>
+      {(loading && isOpen && isLoading) && loading}
       <Content 
         height={heightValue}
         isInit={isInit} 
