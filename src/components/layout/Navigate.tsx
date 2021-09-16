@@ -21,7 +21,9 @@ export const CATEGORIES: Menu[] = [
   {title: 'WebRTC(local)', url: '/webrtc/local', path: '/WebRTC/Local'},
   {title: 'WebRTC(remote)', url: '/webrtc/remote', path: '/WebRTC/Remote/'},
   {url: '/webrtc/remote/:room', path: '/WebRTC/Remote/Detail'},
-  {title: 'WebGL', url: '/webgl', path: '/WebGL'}
+  {title: 'WebGL', url: '/webgl', path: '/WebGL'},
+  {title: 'Canvas', url: '/canvas', path: '/Canvas'},
+  {title: 'Notification', url: '/notification', path: '/Notification'}
 ]
 
 const Navigate: React.FC = () => {
