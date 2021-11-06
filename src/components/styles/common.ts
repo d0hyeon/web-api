@@ -20,7 +20,7 @@ export const Section = styled.section`
 
 export const Article = styled.article`
   & ~ & {
-    margin-top: 10px;
+    margin-top: 30px;
   }
 
   h3 {
