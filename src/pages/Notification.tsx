@@ -60,6 +60,9 @@ const NotificationPage: FC = () => {
       <Section>
         <Header>
           <H2>Interface</H2>
+          <P>
+            <Code>const notification = new Notification(title, options)</Code>
+          </P>
         </Header>
         <Article>
           <Ul>
