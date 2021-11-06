@@ -2,7 +2,8 @@ import React from 'react';
 import {BrowserRouter, Switch, Route} from 'react-router-dom'
 import {Global, css} from '@emotion/react';
 import styled from '@emotion/styled';
-import Navigate, { CATEGORIES } from '@src/components/layout/Navigate';
+import Navigate from '@src/components/layout/Navigate';
+import { ROUTES } from '@src/constants/route'
 
 
 const Home = React.lazy(() => import('@src/pages/Home'));
@@ -11,7 +12,7 @@ type ComponentMap = {[key: string]: React.ComponentType};
 const App: React.FC = () => {
   const componentMap: ComponentMap = React.useMemo(() => {
     let map:ComponentMap = {};
-    CATEGORIES.forEach(({path}) => {
+    ROUTES.forEach(({path}) => {
       map[path] = React.lazy(() => import(`@src/pages${path}`));
     })
     return map;
@@ -25,7 +26,7 @@ const App: React.FC = () => {
           <React.Suspense fallback="">
             <main className="content">
               <Route exact path="/" component={Home}/>
-              {CATEGORIES.map(({url, path}) => (
+              {ROUTES.map(({url, path}) => (
                 <Route key={url} exact path={url} component={componentMap[path]} />
               ))}
             </main>

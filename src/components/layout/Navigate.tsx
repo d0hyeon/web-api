@@ -1,38 +1,14 @@
 import React from 'react';
-import {NavLink} from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import styled from '@emotion/styled';
-
-type Menu = {
-  title?: string;
-  url: string;
-  path: string;
-}
-
-export const CATEGORIES: Menu[] = [
-  {title: 'BroadCast Channel', url: '/broadcast', path: '/Broadcast'},
-  {url: '/broadcast/:channelId', path: '/Broadcast/detail'},
-  {title: 'Background Task', url: '/background', path: '/BackgroundTask'},
-  {title: 'Resize Observer', url: '/resize', path: '/ResizeObserver'},
-  {title: 'Performance', url: '/performance', path: '/Performance'},
-  {title: 'PerformanceObserver', url: '/performance/observer', path: '/Performance/Observer'},
-  {title: 'MediaStream', url: '/media', path: '/MediaStream'},
-  {title: 'MediaStreamTrack', url: '/media/track', path: '/MediaStream/Track'},
-  {title: 'MediaDevices', url: '/media/devices', path: '/MediaStream/Devices'},
-  {title: 'WebRTC(local)', url: '/webrtc/local', path: '/WebRTC/Local'},
-  {title: 'WebRTC(remote)', url: '/webrtc/remote', path: '/WebRTC/Remote/'},
-  {url: '/webrtc/remote/:room', path: '/WebRTC/Remote/Detail'},
-  {title: 'WebGL', url: '/webgl', path: '/WebGL'},
-  {title: 'Canvas', url: '/canvas', path: '/Canvas'},
-  {title: 'Notification', url: '/notification', path: '/Notification'}
-]
+import { ROUTES } from '@src/constants/route';
 
 const Navigate: React.FC = () => {
-  
   return (
     <Wrapper className="navigate">
       <Title>목차</Title>
       <MenuList>
-        {CATEGORIES.map(({title, url}) => title && (
+        {ROUTES.map(({title, url}) => title && (
           <li key={title}>
             <NavLink to={url} activeStyle={{color: '#C43326'}} exact>{title}</NavLink>
           </li>
