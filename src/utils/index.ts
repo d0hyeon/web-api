@@ -29,3 +29,7 @@ export const isExistWithInTimeout = <T = unknown>(value: T, timeout: number = 30
     recursiveCheck(Date.now());
   })
 }
+
+export function getRandomNumber(min: number = 0, max: number = 100) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
