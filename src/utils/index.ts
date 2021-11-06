@@ -2,7 +2,7 @@ export const isExistWithInTimeout = <T = unknown>(value: T, timeout: number = 30
   let durationTime = 0;
 
   return new Promise((resolve, reject) => {
-    const recursiveCheck = (startTime: Date) => {
+    const recursiveCheck = (startTime: number) => {
       if(value) {
         if(value instanceof Object) {
           if(Object.values(value).every(value => !!value)) {
@@ -16,16 +16,16 @@ export const isExistWithInTimeout = <T = unknown>(value: T, timeout: number = 30
           return resolve(value);
         }
       }
-      const date = new Date();
-      const currentTime = date.getTime() - startTime.getTime();
+      const date = Date.now();
+      const currentTime = date - startTime;
       durationTime += currentTime;
       
       if(durationTime > timeout) {
         return reject(null);
       } 
 
-      setTimeout(() => recursiveCheck(date), repeatUnit);
+      setTimeout(() => recursiveCheck(startTime), repeatUnit);
     }
-    recursiveCheck(new Date());
+    recursiveCheck(Date.now());
   })
 }
