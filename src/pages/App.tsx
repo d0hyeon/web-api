@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {BrowserRouter, Switch, Route} from 'react-router-dom'
 import {Global, css} from '@emotion/react';
 import styled from '@emotion/styled';
@@ -10,26 +10,27 @@ const Home = React.lazy(() => import('@src/pages/Home'));
 type ComponentMap = {[key: string]: React.ComponentType};
 
 const App: React.FC = () => {
-  const componentMap: ComponentMap = React.useMemo(() => {
+  const componentMap: ComponentMap = useMemo(() => {
     let map:ComponentMap = {};
     ROUTES.forEach(({path}) => {
       map[path] = React.lazy(() => import(`@src/pages${path}`));
     })
     return map;
   }, []);
+  const navigateWidth = useMemo(() => 300, [])
   return (
     <Layout>
       <Global styles={globalCss} />
       <BrowserRouter>
-        <Navigate /> 
+        <Navigate width={navigateWidth}/> 
         <Switch>
           <React.Suspense fallback="">
-            <main className="content">
+            <Content blank={navigateWidth}>
               <Route exact path="/" component={Home}/>
               {ROUTES.map(({url, path}) => (
                 <Route key={url} exact path={url} component={componentMap[path]} />
               ))}
-            </main>
+            </Content>
           </React.Suspense>
         </Switch>
       </BrowserRouter>
@@ -41,15 +42,10 @@ const Layout = styled.div`
   display: flex;
   height: 100vh;
   align-items: flex-start;
+`
 
-  .navigate {
-    flex: 0 0 auto;
-  }
-  .content {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    padding: 20px;
-  }
+const Content = styled.main<{blank: number}>`
+  padding: ${({ blank }) => `20px ${blank + 20}px`};
 `
 
 const globalCss = css`

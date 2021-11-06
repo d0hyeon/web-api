@@ -3,7 +3,11 @@ import { NavLink } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { ROUTES } from '@src/constants/route';
 
-const Navigate: React.FC = () => {
+interface Props {
+  width: number
+}
+
+const Navigate: React.FC<Props> = ({width}) => {
   const routes = useMemo(() => {
     return ROUTES.sort((a, b) => {
       if(a.title && b.title) {
@@ -13,7 +17,7 @@ const Navigate: React.FC = () => {
     })
   }, [])
   return (
-    <Wrapper className="navigate">
+    <Wrapper className="navigate" width={width}>
       <Title>목차</Title>
       <MenuList>
         {routes.map(({title, url}) => title && (
@@ -34,11 +38,15 @@ const Title = styled.p`
   margin-bottom: 20px;
 `
 
-const Wrapper = styled.nav`
-  width: 300px;
+const Wrapper = styled.nav<Props>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: ${({width}) => `${width}px`};
   height: 100%;
-  padding: 10px 20px;
+  padding: 20px;
   border-right: 1px solid #ddd;
+  overflow-y: auto;
 `;
 
 const MenuList = styled.ul`
